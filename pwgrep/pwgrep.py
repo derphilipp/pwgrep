@@ -3,15 +3,16 @@
 import argparse
 import os
 import sys
-
-from pwgrep import commandparsertext
+import re
+import string
+import commandparsertext
 from version import VERSION
-
 
 # [-R|-r] [-h] [-i] [-v] [-o] [--color[=(never|always|auto)] PATTERN [PATH ..]
 
 
 class CommandParser(object):
+
     def __init__(self, args):
         self._parser = argparse.ArgumentParser(add_help=False)
 
@@ -84,10 +85,68 @@ class CommandParser(object):
             'Invalid type of color "{}" set'.format(self.args.color))
 
 
+def lines_from_file(filename):
+    try:
+        file = open(filename, 'r')
+        for linenr, line in enumerate(file):
+            yield linenr, line
+    except IOError:
+        # TODO: Specify what happens here
+        pass
+
+
+def search_in_file(filename, regex):
+    for linenr, line in lines_from_file(filename):
+        if regex.search(line):
+            yield linenr, line
+
+
+def filelist(startpoint):
+    # TODO Build in recursion etc.
+    for element in startpoint:
+        yield element
+
+
 def display_version():
     print("Version {}".format(VERSION))
 
 
+def print_match(filename, line, regex, do_not_display_filename=False):
+    # TODO: Print in colors
+    # TODO: Print binary files differently
+    line = string.strip(line)
+    if do_not_display_filename:
+        print(line)
+    else:
+        print('{}:{}'.format(filename, line))
+
+
+def build_regex(regex):
+    # TODO: Check flags for regex options (ignore case, etc.)
+    compiled_regex = re.compile(regex)
+    return compiled_regex
+
+
+def main(args):
+    p = CommandParser(args)
+    regex = build_regex(p.options.PATTERN[0])
+    any_match = False
+
+    for file in filelist(p.options.PATH):
+        for linenr, line in search_in_file(file, regex):
+            any_match = True
+            print_match(file, line, regex, p.options.no_filename)
+
+    if any_match:
+        return 0
+    else:
+        return 1
+
 if __name__ == "__main__":
-    p = CommandParser(sys.argv)
-    print(p.options)
+    try:
+        result = main(sys.argv)
+    except ValueError:
+        # TODO: Make more specific handlers
+        print("Exception!")
+        sys.exit(1)
+    sys.exit(result)
