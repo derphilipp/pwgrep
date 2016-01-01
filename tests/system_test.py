@@ -40,3 +40,11 @@ def test_no_match():
     assert err == ''
     assert result == ''
     assert code == 1
+
+
+def test_text_match_no_filename():
+    """ggrep -h Zen *"""
+    code, result, err = caller('simple', '-h Zen *')
+    assert err == ''
+    assert result == 'The Zen of Python, by Tim Peters\n'
+    assert code == 0

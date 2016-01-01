@@ -111,24 +111,31 @@ def display_version():
     print("Version {}".format(VERSION))
 
 
-def print_match(filename, line, regex):
+def print_match(filename, line, regex, do_not_display_filename=False):
     # TODO: Print in colors
     # TODO: Print binary files differently
     line = string.strip(line)
-    print('{}:{}'.format(filename, line))
+    if do_not_display_filename:
+        print(line)
+    else:
+        print('{}:{}'.format(filename, line))
+
+
+def build_regex(regex):
+    # TODO: Check flags for regex options (ignore case, etc.)
+    compiled_regex = re.compile(regex)
+    return compiled_regex
 
 
 def main(args):
     p = CommandParser(args)
-    # TODO: Check flags for options
-    regex = re.compile(p.options.PATTERN[0])
-
+    regex = build_regex(p.options.PATTERN[0])
     any_match = False
 
     for file in filelist(p.options.PATH):
         for linenr, line in search_in_file(file, regex):
             any_match = True
-            print_match(file, line, regex)
+            print_match(file, line, regex, p.options.no_filename)
 
     if any_match:
         return 0
@@ -138,7 +145,8 @@ def main(args):
 if __name__ == "__main__":
     try:
         result = main(sys.argv)
-    except:
+    except ValueError:
         # TODO: Make more specific handlers
+        print("Exception!")
         sys.exit(1)
     sys.exit(result)
