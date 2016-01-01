@@ -10,7 +10,9 @@ from version import VERSION
 
 # [-R|-r] [-h] [-i] [-v] [-o] [--color[=(never|always|auto)] PATTERN [PATH ..]
 
+
 class CommandParser(object):
+
     def __init__(self, args):
         self._parser = argparse.ArgumentParser(add_help=False)
 
@@ -92,14 +94,11 @@ def lines_from_file(filename):
         # TODO: Specify what happens here
         pass
 
+
 def search_in_file(filename, regex):
     for linenr, line in lines_from_file(filename):
         if regex.search(line):
             yield linenr, line
-
-def search_files(list_of_files):
-    for filename in list_of_files:
-        search_in_file(filename, regex)
 
 
 def filelist(startpoint):
@@ -107,8 +106,10 @@ def filelist(startpoint):
     for element in startpoint:
         yield element
 
+
 def display_version():
     print("Version {}".format(VERSION))
+
 
 def print_match(filename, line, regex):
     # TODO: Print in colors
@@ -137,7 +138,7 @@ def main(args):
 if __name__ == "__main__":
     try:
         result = main(sys.argv)
-    except e:
+    except:
+        # TODO: Make more specific handlers
         sys.exit(1)
     sys.exit(result)
-

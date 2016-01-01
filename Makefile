@@ -17,3 +17,6 @@ pypi:
 
 test:
 	tox
+
+pep8:
+	find pwgrep -iname *.py | xargs autopep8 -i
