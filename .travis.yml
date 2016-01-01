@@ -17,7 +17,6 @@ env:
 install:
         - travis_retry sudo apt-get update
         - travis_retry sudo apt-get install python python3 pypy
-        - travis_retry sudo apt-get install pypy3
         - travis_retry sudo apt-get install grep
         - travis_retry pip install tox
 script: tox -e $TOXENV
