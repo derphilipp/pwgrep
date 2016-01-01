@@ -4,14 +4,11 @@ import argparse
 import os
 import sys
 import re
-
-#from pwgrep import commandparsertext
+import string
 import commandparsertext
 from version import VERSION
 
-
 # [-R|-r] [-h] [-i] [-v] [-o] [--color[=(never|always|auto)] PATTERN [PATH ..]
-
 
 class CommandParser(object):
     def __init__(self, args):
@@ -101,8 +98,8 @@ def search_in_file(filename, regex):
             yield linenr, line
 
 def search_files(list_of_files):
-    for file in list_of_files:
-        search_in_file(list_of_files, regex)
+    for filename in list_of_files:
+        search_in_file(filename, regex)
 
 
 def filelist(startpoint):
@@ -113,15 +110,34 @@ def filelist(startpoint):
 def display_version():
     print("Version {}".format(VERSION))
 
+def print_match(filename, line, regex):
+    # TODO: Print in colors
+    # TODO: Print binary files differently
+    line = string.strip(line)
+    print('{}:{}'.format(filename, line))
+
+
 def main(args):
     p = CommandParser(args)
-    print(p.options)
     # TODO: Check flags for options
     regex = re.compile(p.options.PATTERN[0])
+
+    any_match = False
+
     for file in filelist(p.options.PATH):
         for linenr, line in search_in_file(file, regex):
-            print (linenr+1)
+            any_match = True
+            print_match(file, line, regex)
 
+    if any_match:
+        return 0
+    else:
+        return 1
 
 if __name__ == "__main__":
-    main(sys.argv)
+    try:
+        result = main(sys.argv)
+    except e:
+        sys.exit(1)
+    sys.exit(result)
+

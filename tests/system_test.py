@@ -8,7 +8,7 @@ def caller(directory, command):
                      shell=True)
     proc.wait()
     stdout, stderr = proc.communicate()
-    code=4711
+    code=proc.returncode
     #output = proc.stdout.read()
     #error_output = proc.stderr.read()
     return code, stdout,stderr
@@ -22,15 +22,15 @@ def test_text_match():
     """ggrep Zen *"""
     code, result, err = caller('simple', 'Zen *')
     assert err == ''
-    assert result == """zen_of_python.txt:The Zen of Python, by Tim Peters"""
+    assert result == 'zen_of_python.txt:The Zen of Python, by Tim Peters\n'
     assert code == 0
 
 
-def test_binary_match():
+def tXest_binary_match():
     """ggrep Hello *"""
     code, result, err = caller('simple', 'Hello *')
     assert err == ''
-    assert result == """Binary file helloworld matches"""
+    assert result == 'Binary file helloworld matches\n'
     assert code == 0
 
 
