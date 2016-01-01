@@ -19,6 +19,8 @@ def caller(directory, command):
 #  1 -- Fehler oder kein Match
 #  128 + X -- Killed by signal X
 
+
+# Basic Search
 def test_text_match():
     """ggrep Zen *"""
     code, result, err = caller('simple', 'Zen *')
@@ -43,6 +45,7 @@ def test_no_match():
     assert code == 1
 
 
+# No display of filename
 def test_text_match_no_filename():
     """ggrep -h Zen *"""
     code, result, err = caller('simple', '-h Zen *')
@@ -52,8 +55,25 @@ def test_text_match_no_filename():
 
 
 def test_binary_match_no_filename():
-    """ggrep -h Zen *"""
+    """ggrep -h Hello *"""
     code, result, err = caller('simple', '-h Hello *')
+    assert err == ''
+    assert result == 'Binary file helloworld matches\n'
+    assert code == 0
+
+
+# Ignore case
+def test_text_match_ignore_case():
+    """ggrep -i zEN *"""
+    code, result, err = caller('simple', '-i zEN *')
+    assert err == ''
+    assert result == 'zen_of_python.txt:The Zen of Python, by Tim Peters\n'
+    assert code == 0
+
+
+def test_binary_match_ignore_case():
+    """ggrep -h Hello *"""
+    code, result, err = caller('simple', '-i hElLo *')
     assert err == ''
     assert result == 'Binary file helloworld matches\n'
     assert code == 0
