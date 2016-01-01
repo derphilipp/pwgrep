@@ -6,6 +6,8 @@ import sys
 import re
 import string
 import commandparsertext
+import mimetypes
+
 from version import VERSION
 
 # [-R|-r] [-h] [-i] [-v] [-o] [--color[=(never|always|auto)] PATTERN [PATH ..]
@@ -85,6 +87,11 @@ class CommandParser(object):
             'Invalid type of color "{}" set'.format(self.args.color))
 
 
+def file_is_binary(filename):
+    type, _ = mimetypes.guess_type(filename)
+    return type is None or not type.startswith('text')
+
+
 def lines_from_file(filename):
     try:
         file = open(filename, 'r')
@@ -95,10 +102,17 @@ def lines_from_file(filename):
         pass
 
 
-def search_in_file(filename, regex):
+def search_in_text_file(filename, regex):
     for linenr, line in lines_from_file(filename):
         if regex.search(line):
             yield linenr, line
+
+
+def search_in_binary_file(filename, regex):
+    for _, line in lines_from_file(filename):
+        if regex.search(line):
+            return True
+    return False
 
 
 def filelist(startpoint):
@@ -111,14 +125,17 @@ def display_version():
     print("Version {}".format(VERSION))
 
 
-def print_match(filename, line, regex, do_not_display_filename=False):
+def print_match(filename, line, regex, do_not_display_filename=False,
+                file_is_binary=False):
     # TODO: Print in colors
     # TODO: Print binary files differently
-    line = string.strip(line)
-    if do_not_display_filename:
-        print(line)
+
+    if file_is_binary:
+        print('Binary file {} matches'.format(filename))
+    elif do_not_display_filename:
+        print(string.strip(line))
     else:
-        print('{}:{}'.format(filename, line))
+        print('{}:{}'.format(filename, string.strip(line)))
 
 
 def build_regex(regex):
@@ -133,9 +150,16 @@ def main(args):
     any_match = False
 
     for file in filelist(p.options.PATH):
-        for linenr, line in search_in_file(file, regex):
-            any_match = True
-            print_match(file, line, regex, p.options.no_filename)
+        if file_is_binary(file):
+            if search_in_binary_file(file, regex):
+                any_match = True
+                print_match(file, None, regex, p.options.no_filename,
+                            file_is_binary=True)
+        else:
+            for linenr, line in search_in_text_file(file, regex,):
+                any_match = True
+                print_match(file, line, regex, p.options.no_filename,
+                            file_is_binary=False)
 
     if any_match:
         return 0
