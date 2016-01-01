@@ -71,10 +71,10 @@ def test_binary_match_ignore_case():
 
 
 # io error, file not readable
-def test_writetofile(tmpdir):
+def test_file_not_readable(tmpdir):
     file = tmpdir.join('unreadable.txt')
     file.write('This file is not readable')
-    file.chmod(000)
+    file.chmod(0)
     filename = str(file)
     helper_test_match(simpledir, 'readable {}'.format(filename),
                       'pwgrep: {}: Permission denied\n'.format(filename), '', 1)
