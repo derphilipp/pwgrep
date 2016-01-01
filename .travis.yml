@@ -6,14 +6,16 @@ env:
         - TOXENV=py34
         - TOXENV=py35
         - TOXENV=pypy
+        - TOXENV=pypy3
         - TOXENV=jython
         - TOXENV=coverage
         - TOXENV=flake8
 install:
         - travis_retry sudo apt-get update
-          #- travis_retry sudo apt-get install python python3 pypy jython
+        - travis_retry sudo apt-get install python python3 pypy jython
         - travis_retry sudo apt-get install grep
         - travis_retry pip install tox
+        - travis_retry pip install coveralls
 script: tox -e $TOXENV
 before_install:
         - pip install codecov
