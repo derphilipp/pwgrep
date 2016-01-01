@@ -3,8 +3,10 @@
 import argparse
 import os
 import sys
+import re
 
-from pwgrep import commandparsertext
+#from pwgrep import commandparsertext
+import commandparsertext
 from version import VERSION
 
 
@@ -84,10 +86,42 @@ class CommandParser(object):
             'Invalid type of color "{}" set'.format(self.args.color))
 
 
+def lines_from_file(filename):
+    try:
+        file = open(filename, 'r')
+        for linenr, line in enumerate(file):
+            yield linenr, line
+    except IOError:
+        # TODO: Specify what happens here
+        pass
+
+def search_in_file(filename, regex):
+    for linenr, line in lines_from_file(filename):
+        if regex.search(line):
+            yield linenr, line
+
+def search_files(list_of_files):
+    for file in list_of_files:
+        search_in_file(list_of_files, regex)
+
+
+def filelist(startpoint):
+    # TODO Build in recursion etc.
+    for element in startpoint:
+        yield element
+
 def display_version():
     print("Version {}".format(VERSION))
 
+def main(args):
+    p = CommandParser(args)
+    print(p.options)
+    # TODO: Check flags for options
+    regex = re.compile(p.options.PATTERN[0])
+    for file in filelist(p.options.PATH):
+        for linenr, line in search_in_file(file, regex):
+            print (linenr+1)
+
 
 if __name__ == "__main__":
-    p = CommandParser(sys.argv)
-    print(p.options)
+    main(sys.argv)
