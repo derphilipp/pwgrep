@@ -1,22 +1,24 @@
 language: python
 python:
-        - 2.7
-        - 3.3
-        - 3.4
-        - 3.5
-        - pypy
-        - pypy3
-        - jython
+        - "2.7"
+        - "3.3"
+        - "3.4"
+        - "3.5"
+        - "pypy"
+        - "pypy3"
+        - "jython"
 env:
         - TOXENV=py27
         - TOXENV=py33
         - TOXENV=py34
         - TOXENV=py35
+        - TOXENV=pypy
+        - TOXENV=jython
         - TOXENV=coverage
         - TOXENV=flake8
 install:
         - travis_retry sudo apt-get update
-        - travis_retry sudo apt-get install python python3 pypy
+          #- travis_retry sudo apt-get install python python3 pypy jython
         - travis_retry sudo apt-get install grep
         - travis_retry pip install tox
 script: tox -e $TOXENV
