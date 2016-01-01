@@ -3,6 +3,7 @@
 import re
 import string
 import sys
+import signal
 
 import file_helper
 import command_parser
@@ -14,8 +15,6 @@ def build_regex(regex, ignore_case=False):
         return re.compile(regex, flags=re.IGNORECASE)
     return re.compile(regex)
 
-# [-R|-r] [-h] [-i] [-v] [-o] [--color[=(never|always|auto)] PATTERN [PATH ..]
-
 
 def lines_from_file(filename):
     try:
@@ -23,8 +22,7 @@ def lines_from_file(filename):
         for linenr, line in enumerate(file):
             yield linenr, line
     except IOError:
-        # TODO: Specify what happens here
-        pass
+        print ('pwgrep: {}: Permission denied'.format(filename))
 
 
 def search_in_text_file(filename, regex):
@@ -85,11 +83,19 @@ def main(args):
     else:
         return 1
 
+
+def signal_terminal_handler(signal, frame):
+    # TODO: Test all this
+    print 'got SIGTERM'
+    sys.exit(123)
+
+
 if __name__ == "__main__":
+    signal.signal(signal.SIGTERM, signal_terminal_handler)
+
     try:
         result = main(sys.argv)
-    except ValueError:
-        # TODO: Make more specific handlers
-        print("Exception!")
+    except KeyboardInterrupt:
         sys.exit(1)
+
     sys.exit(result)
