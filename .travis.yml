@@ -17,7 +17,5 @@ install:
         - travis_retry pip install tox
         - travis_retry pip install coveralls
 script: tox -e $TOXENV
-before_install:
-        - pip install codecov
 after_success:
-        - codecov
+        - coveralls
