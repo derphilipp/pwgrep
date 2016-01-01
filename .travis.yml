@@ -13,7 +13,7 @@ install:
         - travis_retry sudo apt-get update
         - travis_retry sudo apt-get install grep
         - travis_retry sudo apt-get install python3
-        - travis_retry sudo apt-get install python2
+        - travis_retry sudo apt-get install python
         - travis_retry pip install tox
 script: tox -e $TOXENV
 before_install:
