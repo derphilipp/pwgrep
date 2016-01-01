@@ -1,9 +1,12 @@
 language: python
 python:
         - 2.7
+        - 3.3
+        - 3.4
+        - 3.5
+        - pypy
 env:
         - TOXENV=py27
-        - TOXENV=py32
         - TOXENV=py33
         - TOXENV=py34
         - TOXENV=py35
@@ -11,9 +14,8 @@ env:
         - TOXENV=flake8
 install:
         - travis_retry sudo apt-get update
+        - travis_retry sudo apt-get install python python3
         - travis_retry sudo apt-get install grep
-        - travis_retry sudo apt-get install python3
-        - travis_retry sudo apt-get install python
         - travis_retry pip install tox
 script: tox -e $TOXENV
 before_install:
