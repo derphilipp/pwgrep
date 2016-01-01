@@ -26,7 +26,7 @@ def test_text_match():
     assert code == 0
 
 
-def tXest_binary_match():
+def test_binary_match():
     """ggrep Hello *"""
     code, result, err = caller('simple', 'Hello *')
     assert err == ''
@@ -47,4 +47,12 @@ def test_text_match_no_filename():
     code, result, err = caller('simple', '-h Zen *')
     assert err == ''
     assert result == 'The Zen of Python, by Tim Peters\n'
+    assert code == 0
+
+
+def test_binary_match_no_filename():
+    """ggrep -h Zen *"""
+    code, result, err = caller('simple', '-h Hello *')
+    assert err == ''
+    assert result == 'Binary file helloworld matches\n'
     assert code == 0
