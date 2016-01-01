@@ -2,13 +2,14 @@
 # -*- coding: utf-8 -*-
 import argparse
 import os
-import sys
 import re
 import string
-import commandparsertext
-import mimetypes
+import sys
 
+import commandparsertext
+from file_helper import file_is_binary
 from version import VERSION
+
 
 # [-R|-r] [-h] [-i] [-v] [-o] [--color[=(never|always|auto)] PATTERN [PATH ..]
 
@@ -85,11 +86,6 @@ class CommandParser(object):
         # TODO More userfriendly error handling
         raise ValueError(
             'Invalid type of color "{}" set'.format(self.args.color))
-
-
-def file_is_binary(filename):
-    type, _ = mimetypes.guess_type(filename)
-    return type is None or not type.startswith('text')
 
 
 def lines_from_file(filename):
