@@ -1,91 +1,20 @@
 #!/usr/bin/env python2.7
 # -*- coding: utf-8 -*-
-import argparse
-import os
 import re
 import string
 import sys
 
-import commandparsertext
-from file_helper import file_is_binary
-from version import VERSION
+import file_helper
+import command_parser
+import version
 
+
+def build_regex(regex, ignore_case=False):
+    if ignore_case:
+        return re.compile(regex, flags=re.IGNORECASE)
+    return re.compile(regex)
 
 # [-R|-r] [-h] [-i] [-v] [-o] [--color[=(never|always|auto)] PATTERN [PATH ..]
-
-
-class CommandParser(object):
-
-    def __init__(self, args):
-        self._parser = argparse.ArgumentParser(add_help=False)
-
-        self._parser.add_argument(
-            '-R', '--dereference-recursive',
-            action='store_true',
-            help=commandparsertext.DEREFERENCE_RECURSIVE
-        )
-        self._parser.add_argument(
-            '-r', '--recursive',
-            action='store_true',
-            help=commandparsertext.RECURSIVE)
-        self._parser.add_argument(
-            '-h', '--no-filename',
-            action='store_true',
-            help=commandparsertext.NO_FILENAME
-        )
-        self._parser.add_argument(
-            '-i', '-y', '--ignore-case',
-            action='store_true',
-            help=commandparsertext.IGNORE_CASE
-        )
-        self._parser.add_argument(
-            '-v', '--invert-match',
-            action='store_true',
-            help=commandparsertext.INVERT_MATCH
-        )
-
-        self._parser.add_argument(
-            '-o', '--only-matching',
-            action='store_true',
-            help=commandparsertext.ONLY_MATCHING
-        )
-
-        self._parser.add_argument(
-            '--color', nargs='?', default='never',
-            help=commandparsertext.COLOR
-        )
-
-        self._parser.add_argument(
-            'PATTERN',
-            metavar='PATTERN', type=str, nargs=1,
-            help=commandparsertext.PATTERN
-        )
-        self._parser.add_argument(
-            'PATH',
-            metavar='PATH', type=str, nargs='*',
-            help=commandparsertext.PATH
-        )
-        self._parser.add_argument(
-            '--version',
-            action='version', version='%(prog)s {}'.format(VERSION)
-        )
-        self._parser.add_argument(
-            '--help',
-            action='help', help=commandparsertext.HELP
-        )
-        self.options = self._parser.parse_args()
-
-    @property
-    def color(self):
-        if self.args.color is None or self.args.color == 'never':
-            return False
-        if self.args.color == 'always':
-            return True
-        if self.args.color == 'auto':
-            return os.isatty(sys.stdout.fileno())
-        # TODO More userfriendly error handling
-        raise ValueError(
-            'Invalid type of color "{}" set'.format(self.args.color))
 
 
 def lines_from_file(filename):
@@ -118,7 +47,7 @@ def filelist(startpoint):
 
 
 def display_version():
-    print("Version {}".format(VERSION))
+    print("Version {}".format(version.VERSION))
 
 
 def print_match(filename, line, regex, do_not_display_filename=False,
@@ -134,19 +63,13 @@ def print_match(filename, line, regex, do_not_display_filename=False,
         print('{}:{}'.format(filename, string.strip(line)))
 
 
-def build_regex(regex):
-    # TODO: Check flags for regex options (ignore case, etc.)
-    compiled_regex = re.compile(regex)
-    return compiled_regex
-
-
 def main(args):
-    p = CommandParser(args)
-    regex = build_regex(p.options.PATTERN[0])
+    p = command_parser.CommandParser(args)
+    regex = build_regex(p.options.PATTERN[0], p.options.ignore_case)
     any_match = False
 
     for file in filelist(p.options.PATH):
-        if file_is_binary(file):
+        if file_helper.file_is_binary(file):
             if search_in_binary_file(file, regex):
                 any_match = True
                 print_match(file, None, regex, p.options.no_filename,
