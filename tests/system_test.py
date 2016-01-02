@@ -15,8 +15,6 @@ def caller(directory, command):
     proc.wait()
     stdout, stderr = proc.communicate()
     code=proc.returncode
-    #output = proc.stdout.read()
-    #error_output = proc.stderr.read()
     return code, stdout,stderr
 
 
@@ -25,6 +23,7 @@ def caller(directory, command):
 #  128 + X -- Killed by signal X
 
 simpledir = r'./tests/data/simple'
+
 
 def helper_test_match(directory, command, stdout_shall, stderr_shall, return_code_shall):
     return_code_is, stdout_is, stderr_is = caller(directory, command)
@@ -99,3 +98,10 @@ zen_of_python.txt:Readability counts.
 zen_of_python.txt:Unless explicitly silenced.
 """
     helper_test_match(simpledir, '-v h *', expected_stdout, '', 0)
+
+
+# --info
+def test_version():
+    # argparse prints '--version' to stderr due to compatibility reasons
+    helper_test_match(simpledir, '--version', '', 'pwgrep.py 0.0.1\n', 0)
+
