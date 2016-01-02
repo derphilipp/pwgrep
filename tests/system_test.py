@@ -108,6 +108,7 @@ def test_version():
     # argparse prints '--version' to stderr due to compatibility reasons
     helper_test_match(simpledir, '--version', '', 'pwgrep.py 0.0.1\n', 0)
 
+
 # color output
 def test_color_simple():
     expected_stdout=r'[96mzen_of_python.txt[0m:The [1m[91mZen[0m of Python, ' \
@@ -121,6 +122,16 @@ def test_color_readability():
     helper_test_match(simpledir, '--color=always Readability *',
                           expected_stdout, '', 0)
 
+
+def test_color_wrong_option():
+    # argparse exits with exit code 2 ('incorrect usage')
+    expected_stderr="""usage: pwgrep.py [-R] [-r] [-h] [-i] [-v] [-o] [--color [COLOR]] [--version]
+                 [--help]
+                 PATTERN [PATH [PATH ...]]
+pwgrep.py: error: argument --color: unrecognized is not a valid color option
+"""
+    helper_test_match(simpledir, '--color=unrecognized foo *',
+                          '', expected_stderr, 2)
 
 # stdin
 def test_stdin_l():

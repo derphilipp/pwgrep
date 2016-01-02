@@ -8,8 +8,14 @@ import command_parser_text
 import version
 
 
-class CommandParser(object):
+def check_color(value):
+    if value not in ['always', 'never', 'auto']:
+        raise argparse.ArgumentTypeError("{} is not a valid color "
+                                         "option".format(value))
+    return value
 
+
+class CommandParser(object):
     def __init__(self, args):
         self._parser = argparse.ArgumentParser(add_help=False)
 
@@ -46,6 +52,7 @@ class CommandParser(object):
 
         self._parser.add_argument(
             '--color', nargs='?', default='never',
+            type=check_color,
             help=command_parser_text.COLOR
         )
 
@@ -76,8 +83,5 @@ class CommandParser(object):
             return False
         if self.options.color == 'always':
             return True
-        if self.options.color == 'auto':
-            return os.isatty(sys.stdout.fileno())
-        # TODO More userfriendly error handling
-        raise ValueError(
-            'Invalid type of color "{}" set'.format(self.options.color))
+        # must be 'auto'
+        return os.isatty(sys.stdout.fileno())
