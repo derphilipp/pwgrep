@@ -81,6 +81,11 @@ def test_file_not_readable(tmpdir):
     helper_test_match(simpledir, 'readable {}'.format(filename),
                       'pwgrep: {}: Permission denied\n'.format(filename), '', 1)
 
+# io error, file does not exist
+def test_file_does_not_exist(tmpdir):
+    helper_test_match(simpledir, 'search does_not_exist',
+                      'pwgrep: does_not_exist: No such file or directory\n',
+                      '', 1)
 
 # directory
 
@@ -89,7 +94,6 @@ def test_file_is_directory(tmpdir):
     helper_test_match(simpledir, 'directory {}'.format(filename),
                       'pwgrep: {}: is a directory\n'.format(filename),
                       '', 1)
-
 
 
 # inverse search

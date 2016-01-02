@@ -4,6 +4,7 @@ import re
 import string
 import sys
 import signal
+import os
 
 import file_helper
 import command_parser
@@ -22,7 +23,10 @@ def lines_from_file(filename):
         for linenr, line in enumerate(file):
             yield linenr, line
     except IOError:
-        print ('pwgrep: {}: Permission denied'.format(filename))
+        if os.path.exists(filename):
+            print ('pwgrep: {}: Permission denied'.format(filename))
+        else:
+            print ('pwgrep: {}: No such file or directory'.format(filename))
 
 
 def search_in_stdin(regex, invert_search):
@@ -86,10 +90,10 @@ def main(args):
     any_match = False
 
     if not p.options.PATH:
-            for linenr, line in search_in_stdin(regex, p.options.invert_match):
-                any_match = True
-                print_match('', line, regex, True,
-                            False, p.color)
+        for linenr, line in search_in_stdin(regex, p.options.invert_match):
+            any_match = True
+            print_match('', line, regex, True,
+                        False, p.color)
 
     for file in filelist(p.options.PATH):
         if file_helper.file_is_directory(file):
