@@ -123,6 +123,16 @@ def test_color_readability():
                           expected_stdout, '', 0)
 
 
+def test_color_no_color():
+    expected_stdout='zen_of_python.txt:The Zen of Python, by Tim Peters\n'
+    helper_test_match(simpledir, '--color=never Zen *', expected_stdout, '', 0)
+
+
+def test_color_auto_color():
+    expected_stdout='zen_of_python.txt:The Zen of Python, by Tim Peters\n'
+    helper_test_match(simpledir, '--color=auto Zen *', expected_stdout, '', 0)
+
+
 def test_color_wrong_option():
     # argparse exits with exit code 2 ('incorrect usage')
     expected_stderr="""usage: pwgrep.py [-R] [-r] [-h] [-i] [-v] [-o] [--color [COLOR]] [--version]
