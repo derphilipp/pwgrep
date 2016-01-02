@@ -71,12 +71,12 @@ class CommandParser(object):
 
     @property
     def color(self):
-        if self.args.color is None or self.args.color == 'never':
+        if self.options.color is None or self.options.color == 'never':
             return False
-        if self.args.color == 'always':
+        if self.options.color == 'always':
             return True
-        if self.args.color == 'auto':
+        if self.options.color == 'auto':
             return os.isatty(sys.stdout.fileno())
         # TODO More userfriendly error handling
         raise ValueError(
-            'Invalid type of color "{}" set'.format(self.args.color))
+            'Invalid type of color "{}" set'.format(self.options.color))

@@ -8,6 +8,7 @@ import signal
 import file_helper
 import command_parser
 import version
+import colors
 
 
 def build_regex(regex, ignore_case=False):
@@ -48,17 +49,38 @@ def display_version():
     print("Version {}".format(version.VERSION))
 
 
-def print_match(filename, line, regex, do_not_display_filename=False,
-                file_is_binary=False):
-    # TODO: Print in colors
-    # TODO: Print binary files differently
+def print_binary(filename):
+    print('Binary file {} matches'.format(filename))
 
-    if file_is_binary:
-        print('Binary file {} matches'.format(filename))
-    elif do_not_display_filename:
-        print(string.strip(line))
+
+def replacement(match):
+    return '{}{}{}'.format(colors.bcolors.UNDERLINE, match.group(),
+                           colors.bcolors.ENDC)
+
+
+def format_printline(filename, line, regex, color):
+    line = string.strip(line)
+    if color:
+        filename = colors.bcolors.OKGREEN + filename + colors.bcolors.ENDC
+        colon = colors.bcolors.OKBLUE + ':' + colors.bcolors.ENDC
+        line = regex.sub(replacement, line)
     else:
-        print('{}:{}'.format(filename, string.strip(line)))
+        colon = ':'
+    return filename, colon, line
+
+
+def print_match(filename, line, regex, do_not_display_filename=False,
+                file_is_binary=False, color=False, print_only_match=False):
+    # TODO: Print in colors
+    if file_is_binary:
+        print_binary(filename)
+        return
+
+    filename, colon, line = format_printline(filename, line, regex, color)
+    if do_not_display_filename:
+        print(line)
+    else:
+        print('{}{}{}'.format(filename, colon, line))
 
 
 def main(args):
@@ -70,13 +92,13 @@ def main(args):
             if search_in_binary_file(file, regex, p.options.invert_match):
                 any_match = True
                 print_match(file, None, regex, p.options.no_filename,
-                            file_is_binary=True)
+                            True, p.color)
         else:
             for linenr, line in search_in_text_file(file, regex,
                                                     p.options.invert_match):
                 any_match = True
                 print_match(file, line, regex, p.options.no_filename,
-                            file_is_binary=False)
+                            False, p.color)
 
     if any_match:
         return 0
