@@ -68,6 +68,7 @@ class CommandParser(object):
             action='help', help=command_parser_text.HELP
         )
         self.options = self._parser.parse_args(args[1:])
+        # self.options = self._parser.parse_known_args(args[1:])[0]
 
     @property
     def color(self):
