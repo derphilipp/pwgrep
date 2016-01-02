@@ -82,6 +82,16 @@ def test_file_not_readable(tmpdir):
                       'pwgrep: {}: Permission denied\n'.format(filename), '', 1)
 
 
+# directory
+
+def test_file_is_directory(tmpdir):
+    filename = str(tmpdir)
+    helper_test_match(simpledir, 'directory {}'.format(filename),
+                      'pwgrep: {}: is a directory\n'.format(filename),
+                      '', 1)
+
+
+
 # inverse search
 def test_inverse_l():
     expected_stdout = """Binary file helloworld matches
@@ -159,3 +169,5 @@ def test_stdin_year():
     to all of you
     """
     helper_test_match(simpledir, 'Year', 'Year 2016\n', '', 0, stdin)
+
+
