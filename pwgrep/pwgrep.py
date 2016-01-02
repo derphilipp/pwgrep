@@ -45,10 +45,6 @@ def filelist(startpoint):
         yield element
 
 
-def display_version():
-    print("Version {}".format(version.VERSION))
-
-
 def print_binary(filename):
     print('Binary file {} matches'.format(filename))
 
