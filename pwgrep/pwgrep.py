@@ -25,15 +25,15 @@ def lines_from_file(filename):
         print ('pwgrep: {}: Permission denied'.format(filename))
 
 
-def search_in_text_file(filename, regex):
+def search_in_text_file(filename, regex, invert_search):
     for linenr, line in lines_from_file(filename):
-        if regex.search(line):
+        if invert_search != bool(regex.search(line)):
             yield linenr, line
 
 
-def search_in_binary_file(filename, regex):
+def search_in_binary_file(filename, regex, invert_search):
     for _, line in lines_from_file(filename):
-        if regex.search(line):
+        if invert_search != bool(regex.search(line)):
             return True
     return False
 
@@ -65,15 +65,15 @@ def main(args):
     p = command_parser.CommandParser(args)
     regex = build_regex(p.options.PATTERN[0], p.options.ignore_case)
     any_match = False
-
     for file in filelist(p.options.PATH):
         if file_helper.file_is_binary(file):
-            if search_in_binary_file(file, regex):
+            if search_in_binary_file(file, regex, p.options.invert_match):
                 any_match = True
                 print_match(file, None, regex, p.options.no_filename,
                             file_is_binary=True)
         else:
-            for linenr, line in search_in_text_file(file, regex,):
+            for linenr, line in search_in_text_file(file, regex,
+                                                    p.options.invert_match):
                 any_match = True
                 print_match(file, line, regex, p.options.no_filename,
                             file_is_binary=False)

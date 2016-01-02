@@ -78,3 +78,24 @@ def test_file_not_readable(tmpdir):
     filename = str(file)
     helper_test_match(simpledir, 'readable {}'.format(filename),
                       'pwgrep: {}: Permission denied\n'.format(filename), '', 1)
+
+
+# inverse search
+def test_inverse_l():
+    expected_stdout = """Binary file helloworld matches
+zen_of_python.txt:The Zen of Python, by Tim Peters
+zen_of_python.txt:
+zen_of_python.txt:Sparse is better than dense.
+zen_of_python.txt:In the face of ambiguity, refuse the temptation to guess.
+zen_of_python.txt:Now is better than never.
+"""
+    helper_test_match(simpledir, '-v l *', expected_stdout, '', 0)
+
+
+def test_inverse_h():
+    expected_stdout = """Binary file helloworld matches
+zen_of_python.txt:
+zen_of_python.txt:Readability counts.
+zen_of_python.txt:Unless explicitly silenced.
+"""
+    helper_test_match(simpledir, '-v h *', expected_stdout, '', 0)
