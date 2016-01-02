@@ -54,14 +54,14 @@ def print_binary(filename):
 
 
 def replacement(match):
-    return '{}{}{}'.format(colors.bcolors.UNDERLINE, match.group(),
+    return '{}{}{}'.format(colors.bcolors.MATCH, match.group(),
                            colors.bcolors.ENDC)
 
 
 def format_printline(filename, line, regex, color):
     line = string.strip(line)
     if color:
-        filename = colors.bcolors.OKGREEN + filename + colors.bcolors.ENDC
+        filename = colors.bcolors.CYAN + filename + colors.bcolors.ENDC
         colon = colors.bcolors.OKBLUE + ':' + colors.bcolors.ENDC
         line = regex.sub(replacement, line)
     else:
