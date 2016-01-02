@@ -105,3 +105,15 @@ def test_version():
     # argparse prints '--version' to stderr due to compatibility reasons
     helper_test_match(simpledir, '--version', '', 'pwgrep.py 0.0.1\n', 0)
 
+# color output
+def test_color_simple():
+    expected_stdout=r'[96mzen_of_python.txt[0m:The [1m[91mZen[0m of Python, ' \
+               'by Tim Peters\n'
+    helper_test_match(simpledir, '--color=always Zen *', expected_stdout, '', 0)
+
+
+def test_color_readability():
+    expected_stdout=r'[96mzen_of_python.txt[0m:[1m[91mReadability[0m ' \
+                     r'counts.'+'\n'
+    helper_test_match(simpledir, '--color=always Readability *',
+                          expected_stdout, '', 0)

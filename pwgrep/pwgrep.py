@@ -7,7 +7,6 @@ import signal
 
 import file_helper
 import command_parser
-import version
 import colors
 
 
@@ -58,11 +57,8 @@ def format_printline(filename, line, regex, color):
     line = string.strip(line)
     if color:
         filename = colors.bcolors.CYAN + filename + colors.bcolors.ENDC
-        colon = colors.bcolors.OKBLUE + ':' + colors.bcolors.ENDC
         line = regex.sub(replacement, line)
-    else:
-        colon = ':'
-    return filename, colon, line
+    return filename, line
 
 
 def print_match(filename, line, regex, do_not_display_filename=False,
@@ -72,11 +68,11 @@ def print_match(filename, line, regex, do_not_display_filename=False,
         print_binary(filename)
         return
 
-    filename, colon, line = format_printline(filename, line, regex, color)
+    filename, line = format_printline(filename, line, regex, color)
     if do_not_display_filename:
         print(line)
     else:
-        print('{}{}{}'.format(filename, colon, line))
+        print('{}:{}'.format(filename, line))
 
 
 def main(args):
