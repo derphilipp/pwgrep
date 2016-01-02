@@ -1,32 +1,35 @@
 #!/usr/bin/env python2.7
 # -*- coding: utf-8 -*-
 
-import pytest
 import subprocess
-import os
 
 
-def caller(directory, command):
+def caller(directory, command, stdin=None):
     proc=subprocess.Popen('../../../pwgrep/pwgrep.py {}'.format(command),
                      cwd=directory,
                      stdout=subprocess.PIPE,
                      stderr=subprocess.PIPE,
-                     shell=True)
-    proc.wait()
-    stdout, stderr = proc.communicate()
+                     shell=True,
+                     stdin=subprocess.PIPE)
+    #if stdin:
+        #proc.stdin.write(stdin)
+        #proc.stdin.flush()
+        #proc.stdin.close()
+    #proc.wait()
+    if stdin:
+        stdout, stderr = proc.communicate(stdin)#, timeout=TEST_TIMEOUT)
+    else:
+        stdout, stderr = proc.communicate()#, timeout=TEST_TIMEOUT)
+
     code=proc.returncode
     return code, stdout,stderr
-
-
-#  0 -- Keine Fehler und mindestens ein Match
-#  1 -- Fehler oder kein Match
-#  128 + X -- Killed by signal X
 
 simpledir = r'./tests/data/simple'
 
 
-def helper_test_match(directory, command, stdout_shall, stderr_shall, return_code_shall):
-    return_code_is, stdout_is, stderr_is = caller(directory, command)
+def helper_test_match(directory, command, stdout_shall, stderr_shall,
+                      return_code_shall, stdin=None):
+    return_code_is, stdout_is, stderr_is = caller(directory, command, stdin)
     assert stderr_is.decode("utf-8") == (stderr_shall)
     assert stdout_is.decode("utf-8") == (stdout_shall)
     assert return_code_is == (return_code_shall)
@@ -117,3 +120,21 @@ def test_color_readability():
                      r'counts.'+'\n'
     helper_test_match(simpledir, '--color=always Readability *',
                           expected_stdout, '', 0)
+
+
+# stdin
+def test_stdin_l():
+    stdin = b"""Hello
+    World
+    how
+    are
+    you?
+    """
+    helper_test_match(simpledir, 'l', 'Hello\nWorld\n', '', 0, stdin)
+
+def test_stdin_year():
+    stdin = b"""Happy New
+    Year 2016
+    to all of you
+    """
+    helper_test_match(simpledir, 'Year', 'Year 2016\n', '', 0, stdin)

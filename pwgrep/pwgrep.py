@@ -25,6 +25,12 @@ def lines_from_file(filename):
         print ('pwgrep: {}: Permission denied'.format(filename))
 
 
+def search_in_stdin(regex, invert_search):
+    for linenr, line in enumerate(sys.stdin):
+        if invert_search != bool(regex.search(line)):
+            yield linenr, line
+
+
 def search_in_text_file(filename, regex, invert_search):
     for linenr, line in lines_from_file(filename):
         if invert_search != bool(regex.search(line)):
@@ -63,7 +69,6 @@ def format_printline(filename, line, regex, color):
 
 def print_match(filename, line, regex, do_not_display_filename=False,
                 file_is_binary=False, color=False, print_only_match=False):
-    # TODO: Print in colors
     if file_is_binary:
         print_binary(filename)
         return
@@ -79,6 +84,13 @@ def main(args):
     p = command_parser.CommandParser(args)
     regex = build_regex(p.options.PATTERN[0], p.options.ignore_case)
     any_match = False
+
+    if not p.options.PATH:
+            for linenr, line in search_in_stdin(regex, p.options.invert_match):
+                any_match = True
+                print_match('', line, regex, True,
+                            False, p.color)
+
     for file in filelist(p.options.PATH):
         if file_helper.file_is_binary(file):
             if search_in_binary_file(file, regex, p.options.invert_match):
