@@ -92,7 +92,9 @@ def main(args):
                             False, p.color)
 
     for file in filelist(p.options.PATH):
-        if file_helper.file_is_binary(file):
+        if file_helper.file_is_directory(file):
+            print('pwgrep: {}: is a directory'.format(file))
+        elif file_helper.file_is_binary(file):
             if search_in_binary_file(file, regex, p.options.invert_match):
                 any_match = True
                 print_match(file, None, regex, p.options.no_filename,
