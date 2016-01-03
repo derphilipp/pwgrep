@@ -84,6 +84,23 @@ def print_match(filename, line, regex, do_not_display_filename=False,
         print('{}:{}'.format(filename, line))
 
 
+def search_in_file(filename, regex, invert_match, discard_filename,
+                   color):
+    any_match = False
+    if file_helper.file_is_binary(filename):
+        if search_in_binary_file(filename, regex, invert_match):
+            any_match = True
+            print_match(filename, None, regex, discard_filename,
+                        True, color)
+    else:
+        for linenr, line in search_in_text_file(filename, regex,
+                                                invert_match):
+            any_match = True
+            print_match(filename, line, regex, discard_filename,
+                        False, color)
+    return any_match
+
+
 def main(args):
     p = command_parser.CommandParser(args)
     regex = build_regex(p.options.PATTERN[0], p.options.ignore_case)
@@ -92,23 +109,23 @@ def main(args):
     if not p.options.PATH:
         for linenr, line in search_in_stdin(regex, p.options.invert_match):
             any_match = True
-            print_match('', line, regex, True,
-                        False, p.color)
+            print_match('', line, regex, True, False, p.color)
 
     for file in filelist(p.options.PATH):
         if file_helper.file_is_directory(file):
             print('pwgrep: {}: is a directory'.format(file))
-        elif file_helper.file_is_binary(file):
-            if search_in_binary_file(file, regex, p.options.invert_match):
-                any_match = True
-                print_match(file, None, regex, p.options.no_filename,
-                            True, p.color)
+            if p.options.dereference_recursive or p.options.recursive:
+                for root, dirs, files in os.walk(file):
+                    for foundfile in files:
+                        filename = os.path.join(root, foundfile)
+                        if search_in_file(filename, regex,
+                                          p.options.invert_match,
+                                          p.options.no_filename, p.color):
+                            any_match = True
         else:
-            for linenr, line in search_in_text_file(file, regex,
-                                                    p.options.invert_match):
+            if search_in_file(file, regex, p.options.invert_match,
+                              p.options.no_filename, p.color):
                 any_match = True
-                print_match(file, line, regex, p.options.no_filename,
-                            False, p.color)
 
     if any_match:
         return 0
