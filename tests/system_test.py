@@ -23,7 +23,7 @@ def caller(directory, command, stdin=None):
 SIMPLEDIR = r'./tests/data/simple'
 TREEDIR = r'./tests/data/tree'
 SYMLINKDIR = r'./tests/data/symlink'
-
+INFINITE_RECURSION_LINK=r'./tests/data/infinite_recursion'
 
 def helper_test_match(directory, command, stdout_shall, stderr_shall,
                       return_code_shall, stdin=None):
@@ -204,3 +204,10 @@ def test_symlink_follow_links():
 
 def test_symlink_do_not_follow_links():
     helper_test_match(SYMLINKDIR, '-r ll .', '', '', 1)
+
+
+# infinite recursion tests
+def test_infinite_symlink_do_not_follow_links():
+    helper_test_match(INFINITE_RECURSION_LINK, '-r Zen .',
+                      './outter/zen_of_python.txt:The Zen of Python, by Tim '
+                                               'Peters\n', '', 0)
