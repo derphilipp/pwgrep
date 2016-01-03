@@ -137,10 +137,8 @@ def main(args):
         return 1
 
 
-def signal_terminal_handler(signal, frame):
-    # TODO: Test all this
-    print 'got SIGTERM'
-    sys.exit(123)
+def signal_terminal_handler(signal_nr, frame):
+    sys.exit(128 + signal_nr)
 
 
 if __name__ == "__main__":
