@@ -5,24 +5,25 @@ import subprocess
 
 
 def caller(directory, command, stdin=None):
-    proc=subprocess.Popen('../../../pwgrep/pwgrep.py {}'.format(command),
-                     cwd=directory,
-                     stdout=subprocess.PIPE,
-                     stderr=subprocess.PIPE,
-                     shell=True,
-                     stdin=subprocess.PIPE)
-    #if stdin:
-        #proc.stdin.write(stdin)
-        #proc.stdin.flush()
-        #proc.stdin.close()
-    #proc.wait()
+    proc = subprocess.Popen('../../../pwgrep/pwgrep.py {}'.format(command),
+                            cwd=directory,
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE,
+                            shell=True,
+                            stdin=subprocess.PIPE)
+    # if stdin:
+    # proc.stdin.write(stdin)
+    # proc.stdin.flush()
+    # proc.stdin.close()
+    # proc.wait()
     if stdin:
-        stdout, stderr = proc.communicate(stdin)#, timeout=TEST_TIMEOUT)
+        stdout, stderr = proc.communicate(stdin)  # , timeout=TEST_TIMEOUT)
     else:
-        stdout, stderr = proc.communicate()#, timeout=TEST_TIMEOUT)
+        stdout, stderr = proc.communicate()  # , timeout=TEST_TIMEOUT)
 
-    code=proc.returncode
-    return code, stdout,stderr
+    code = proc.returncode
+    return code, stdout, stderr
+
 
 simpledir = r'./tests/data/simple'
 
@@ -38,12 +39,12 @@ def helper_test_match(directory, command, stdout_shall, stderr_shall,
 # Basic Search
 def test_text_match():
     helper_test_match(simpledir, 'Zen *', 'zen_of_python.txt:The Zen of '
-                                         'Python, by Tim Peters\n', '', 0)
+                                          'Python, by Tim Peters\n', '', 0)
 
 
 def test_binary_match():
     helper_test_match(simpledir, 'Hello *', 'Binary file helloworld '
-                                           'matches\n', '', 0)
+                                            'matches\n', '', 0)
 
 
 def test_no_match():
@@ -53,23 +54,23 @@ def test_no_match():
 # No display of filename
 def test_text_match_no_filename():
     helper_test_match(simpledir, '-h Zen *', 'The Zen of Python, by Tim '
-                                            'Peters\n', '', 0)
+                                             'Peters\n', '', 0)
 
 
 def test_binary_match_no_filename():
     helper_test_match(simpledir, '-h Hello *', 'Binary file helloworld '
-                                              'matches\n', '', 0)
+                                               'matches\n', '', 0)
 
 
 # Ignore case
 def test_text_match_ignore_case():
     helper_test_match(simpledir, '-i zEN *', 'zen_of_python.txt:The Zen of '
-                                            'Python, by Tim Peters\n', '', 0)
+                                             'Python, by Tim Peters\n', '', 0)
 
 
 def test_binary_match_ignore_case():
     helper_test_match(simpledir, '-i hElLo *', 'Binary file helloworld '
-                      'matches\n', '', 0)
+                                               'matches\n', '', 0)
 
 
 # io error, file not readable
@@ -81,11 +82,13 @@ def test_file_not_readable(tmpdir):
     helper_test_match(simpledir, 'readable {}'.format(filename),
                       'pwgrep: {}: Permission denied\n'.format(filename), '', 1)
 
+
 # io error, file does not exist
 def test_file_does_not_exist(tmpdir):
     helper_test_match(simpledir, 'search does_not_exist',
                       'pwgrep: does_not_exist: No such file or directory\n',
                       '', 1)
+
 
 # directory
 
@@ -94,6 +97,11 @@ def test_file_is_directory(tmpdir):
     helper_test_match(simpledir, 'directory {}'.format(filename),
                       'pwgrep: {}: is a directory\n'.format(filename),
                       '', 1)
+
+
+def test_current_dir_is_directory(tmpdir):
+    helper_test_match(simpledir, 'directory .',
+                      'pwgrep: .: is a directory\n', '', 1)
 
 
 # inverse search
@@ -125,37 +133,38 @@ def test_version():
 
 # color output
 def test_color_simple():
-    expected_stdout=r'[96mzen_of_python.txt[0m:The [1m[91mZen[0m of Python, ' \
-               'by Tim Peters\n'
+    expected_stdout = r'[96mzen_of_python.txt[0m:The [1m[91mZen[0m of Python, ' \
+                      'by Tim Peters\n'
     helper_test_match(simpledir, '--color=always Zen *', expected_stdout, '', 0)
 
 
 def test_color_readability():
-    expected_stdout=r'[96mzen_of_python.txt[0m:[1m[91mReadability[0m ' \
-                     r'counts.'+'\n'
+    expected_stdout = r'[96mzen_of_python.txt[0m:[1m[91mReadability[0m ' \
+                      r'counts.' + '\n'
     helper_test_match(simpledir, '--color=always Readability *',
-                          expected_stdout, '', 0)
+                      expected_stdout, '', 0)
 
 
 def test_color_no_color():
-    expected_stdout='zen_of_python.txt:The Zen of Python, by Tim Peters\n'
+    expected_stdout = 'zen_of_python.txt:The Zen of Python, by Tim Peters\n'
     helper_test_match(simpledir, '--color=never Zen *', expected_stdout, '', 0)
 
 
 def test_color_auto_color():
-    expected_stdout='zen_of_python.txt:The Zen of Python, by Tim Peters\n'
+    expected_stdout = 'zen_of_python.txt:The Zen of Python, by Tim Peters\n'
     helper_test_match(simpledir, '--color=auto Zen *', expected_stdout, '', 0)
 
 
 def test_color_wrong_option():
     # argparse exits with exit code 2 ('incorrect usage')
-    expected_stderr="""usage: pwgrep.py [-R] [-r] [-h] [-i] [-v] [-o] [--color [COLOR]] [--version]
+    expected_stderr = """usage: pwgrep.py [-R] [-r] [-h] [-i] [-v] [-o] [--color [COLOR]] [--version]
                  [--help]
                  PATTERN [PATH [PATH ...]]
 pwgrep.py: error: argument --color: unrecognized is not a valid color option
 """
     helper_test_match(simpledir, '--color=unrecognized foo *',
-                          '', expected_stderr, 2)
+                      '', expected_stderr, 2)
+
 
 # stdin
 def test_stdin_l():
@@ -167,11 +176,10 @@ def test_stdin_l():
     """
     helper_test_match(simpledir, 'l', 'Hello\nWorld\n', '', 0, stdin)
 
+
 def test_stdin_year():
     stdin = b"""Happy New
     Year 2016
     to all of you
     """
     helper_test_match(simpledir, 'Year', 'Year 2016\n', '', 0, stdin)
-
-
