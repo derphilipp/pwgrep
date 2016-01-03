@@ -113,7 +113,6 @@ def main(args):
 
     for file in filelist(p.options.PATH):
         if file_helper.file_is_directory(file):
-            print('pwgrep: {}: is a directory'.format(file))
             if p.options.dereference_recursive or p.options.recursive:
                 for root, dirs, files in os.walk(file):
                     for foundfile in files:
@@ -122,6 +121,9 @@ def main(args):
                                           p.options.invert_match,
                                           p.options.no_filename, p.color):
                             any_match = True
+            else:
+                print('pwgrep: {}: is a directory'.format(file))
+
         else:
             if search_in_file(file, regex, p.options.invert_match,
                               p.options.no_filename, p.color):
