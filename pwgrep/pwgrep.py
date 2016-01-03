@@ -114,7 +114,9 @@ def main(args):
     for file in filelist(p.options.PATH):
         if file_helper.file_is_directory(file):
             if p.options.dereference_recursive or p.options.recursive:
-                for root, dirs, files in os.walk(file):
+                for root, dirs, files in \
+                    os.walk(file,
+                            followlinks=p.options.dereference_recursive):
                     for foundfile in files:
                         filename = os.path.join(root, foundfile)
                         if search_in_file(filename, regex,
