@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/derphilipp/pwgrep.png?label=ready&title=Ready)](https://waffle.io/derphilipp/pwgrep)
 # PWGREP
 
 pwgrep is a partial (gnu) grep clone in python
