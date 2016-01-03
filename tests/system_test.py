@@ -25,7 +25,8 @@ def caller(directory, command, stdin=None):
     return code, stdout, stderr
 
 
-simpledir = r'./tests/data/simple'
+SIMPLEDIR = r'./tests/data/simple'
+TREEDIR = r'./tests/data/tree'
 
 
 def helper_test_match(directory, command, stdout_shall, stderr_shall,
@@ -38,38 +39,38 @@ def helper_test_match(directory, command, stdout_shall, stderr_shall,
 
 # Basic Search
 def test_text_match():
-    helper_test_match(simpledir, 'Zen *', 'zen_of_python.txt:The Zen of '
+    helper_test_match(SIMPLEDIR, 'Zen *', 'zen_of_python.txt:The Zen of '
                                           'Python, by Tim Peters\n', '', 0)
 
 
 def test_binary_match():
-    helper_test_match(simpledir, 'Hello *', 'Binary file helloworld '
+    helper_test_match(SIMPLEDIR, 'Hello *', 'Binary file helloworld '
                                             'matches\n', '', 0)
 
 
 def test_no_match():
-    helper_test_match(simpledir, 'ThisIsNeverFound *', '', '', 1)
+    helper_test_match(SIMPLEDIR, 'ThisIsNeverFound *', '', '', 1)
 
 
 # No display of filename
 def test_text_match_no_filename():
-    helper_test_match(simpledir, '-h Zen *', 'The Zen of Python, by Tim '
+    helper_test_match(SIMPLEDIR, '-h Zen *', 'The Zen of Python, by Tim '
                                              'Peters\n', '', 0)
 
 
 def test_binary_match_no_filename():
-    helper_test_match(simpledir, '-h Hello *', 'Binary file helloworld '
+    helper_test_match(SIMPLEDIR, '-h Hello *', 'Binary file helloworld '
                                                'matches\n', '', 0)
 
 
 # Ignore case
 def test_text_match_ignore_case():
-    helper_test_match(simpledir, '-i zEN *', 'zen_of_python.txt:The Zen of '
+    helper_test_match(SIMPLEDIR, '-i zEN *', 'zen_of_python.txt:The Zen of '
                                              'Python, by Tim Peters\n', '', 0)
 
 
 def test_binary_match_ignore_case():
-    helper_test_match(simpledir, '-i hElLo *', 'Binary file helloworld '
+    helper_test_match(SIMPLEDIR, '-i hElLo *', 'Binary file helloworld '
                                                'matches\n', '', 0)
 
 
@@ -79,13 +80,13 @@ def test_file_not_readable(tmpdir):
     file.write('This file is not readable')
     file.chmod(0)
     filename = str(file)
-    helper_test_match(simpledir, 'readable {}'.format(filename),
+    helper_test_match(SIMPLEDIR, 'readable {}'.format(filename),
                       'pwgrep: {}: Permission denied\n'.format(filename), '', 1)
 
 
 # io error, file does not exist
 def test_file_does_not_exist(tmpdir):
-    helper_test_match(simpledir, 'search does_not_exist',
+    helper_test_match(SIMPLEDIR, 'search does_not_exist',
                       'pwgrep: does_not_exist: No such file or directory\n',
                       '', 1)
 
@@ -94,13 +95,13 @@ def test_file_does_not_exist(tmpdir):
 
 def test_file_is_directory(tmpdir):
     filename = str(tmpdir)
-    helper_test_match(simpledir, 'directory {}'.format(filename),
+    helper_test_match(SIMPLEDIR, 'directory {}'.format(filename),
                       'pwgrep: {}: is a directory\n'.format(filename),
                       '', 1)
 
 
 def test_current_dir_is_directory(tmpdir):
-    helper_test_match(simpledir, 'directory .',
+    helper_test_match(SIMPLEDIR, 'directory .',
                       'pwgrep: .: is a directory\n', '', 1)
 
 
@@ -113,7 +114,7 @@ zen_of_python.txt:Sparse is better than dense.
 zen_of_python.txt:In the face of ambiguity, refuse the temptation to guess.
 zen_of_python.txt:Now is better than never.
 """
-    helper_test_match(simpledir, '-v l *', expected_stdout, '', 0)
+    helper_test_match(SIMPLEDIR, '-v l *', expected_stdout, '', 0)
 
 
 def test_inverse_h():
@@ -122,37 +123,37 @@ zen_of_python.txt:
 zen_of_python.txt:Readability counts.
 zen_of_python.txt:Unless explicitly silenced.
 """
-    helper_test_match(simpledir, '-v h *', expected_stdout, '', 0)
+    helper_test_match(SIMPLEDIR, '-v h *', expected_stdout, '', 0)
 
 
 # --info
 def test_version():
     # argparse prints '--version' to stderr due to compatibility reasons
-    helper_test_match(simpledir, '--version', '', 'pwgrep.py 0.0.1\n', 0)
+    helper_test_match(SIMPLEDIR, '--version', '', 'pwgrep.py 0.0.1\n', 0)
 
 
 # color output
 def test_color_simple():
     expected_stdout = r'[96mzen_of_python.txt[0m:The [1m[91mZen[0m of Python, ' \
                       'by Tim Peters\n'
-    helper_test_match(simpledir, '--color=always Zen *', expected_stdout, '', 0)
+    helper_test_match(SIMPLEDIR, '--color=always Zen *', expected_stdout, '', 0)
 
 
 def test_color_readability():
     expected_stdout = r'[96mzen_of_python.txt[0m:[1m[91mReadability[0m ' \
                       r'counts.' + '\n'
-    helper_test_match(simpledir, '--color=always Readability *',
+    helper_test_match(SIMPLEDIR, '--color=always Readability *',
                       expected_stdout, '', 0)
 
 
 def test_color_no_color():
     expected_stdout = 'zen_of_python.txt:The Zen of Python, by Tim Peters\n'
-    helper_test_match(simpledir, '--color=never Zen *', expected_stdout, '', 0)
+    helper_test_match(SIMPLEDIR, '--color=never Zen *', expected_stdout, '', 0)
 
 
 def test_color_auto_color():
     expected_stdout = 'zen_of_python.txt:The Zen of Python, by Tim Peters\n'
-    helper_test_match(simpledir, '--color=auto Zen *', expected_stdout, '', 0)
+    helper_test_match(SIMPLEDIR, '--color=auto Zen *', expected_stdout, '', 0)
 
 
 def test_color_wrong_option():
@@ -162,7 +163,7 @@ def test_color_wrong_option():
                  PATTERN [PATH [PATH ...]]
 pwgrep.py: error: argument --color: unrecognized is not a valid color option
 """
-    helper_test_match(simpledir, '--color=unrecognized foo *',
+    helper_test_match(SIMPLEDIR, '--color=unrecognized foo *',
                       '', expected_stderr, 2)
 
 
@@ -174,7 +175,7 @@ def test_stdin_l():
     are
     you?
     """
-    helper_test_match(simpledir, 'l', 'Hello\nWorld\n', '', 0, stdin)
+    helper_test_match(SIMPLEDIR, 'l', 'Hello\nWorld\n', '', 0, stdin)
 
 
 def test_stdin_year():
@@ -182,4 +183,17 @@ def test_stdin_year():
     Year 2016
     to all of you
     """
-    helper_test_match(simpledir, 'Year', 'Year 2016\n', '', 0, stdin)
+    helper_test_match(SIMPLEDIR, 'Year', 'Year 2016\n', '', 0, stdin)
+
+
+# recursion
+
+def test_recursion_text():
+    helper_test_match(TREEDIR, '-R Zen .',
+                      './B/A/B/zen_of_python.txt:The Zen of '
+                      'Python, by Tim Peters\n', '', 0)
+
+
+def test_recursion_binary():
+    helper_test_match(TREEDIR, '-R ll .',
+                      'Binary file ./A/helloworld matches\n', '', 0)
