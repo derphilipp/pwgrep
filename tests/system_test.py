@@ -11,11 +11,6 @@ def caller(directory, command, stdin=None):
                             stderr=subprocess.PIPE,
                             shell=True,
                             stdin=subprocess.PIPE)
-    # if stdin:
-    # proc.stdin.write(stdin)
-    # proc.stdin.flush()
-    # proc.stdin.close()
-    # proc.wait()
     if stdin:
         stdout, stderr = proc.communicate(stdin)  # , timeout=TEST_TIMEOUT)
     else:
@@ -27,6 +22,7 @@ def caller(directory, command, stdin=None):
 
 SIMPLEDIR = r'./tests/data/simple'
 TREEDIR = r'./tests/data/tree'
+SYMLINKDIR = r'./tests/data/symlink'
 
 
 def helper_test_match(directory, command, stdout_shall, stderr_shall,
@@ -187,7 +183,6 @@ def test_stdin_year():
 
 
 # recursion
-
 def test_recursion_text():
     helper_test_match(TREEDIR, '-R Zen .',
                       './B/A/B/zen_of_python.txt:The Zen of '
@@ -197,3 +192,15 @@ def test_recursion_text():
 def test_recursion_binary():
     helper_test_match(TREEDIR, '-R ll .',
                       'Binary file ./A/helloworld matches\n', '', 0)
+# Test symlinks
+# Warning: These will fail on OS that do not
+# support symlinks (for example # FAT32)
+
+# recursion
+def test_symlink_follow_links():
+    helper_test_match(SYMLINKDIR, '-R ll .',
+                      'Binary file ./linked_tree/A/helloworld matches\n', '', 0)
+
+
+def test_symlink_do_not_follow_links():
+    helper_test_match(SYMLINKDIR, '-r ll .', '', '', 1)
