@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import subprocess
-
+import pytest
 
 def caller(directory, command, stdin=None):
     proc = subprocess.Popen('../../../pwgrep/pwgrep.py {}'.format(command),
@@ -23,7 +23,8 @@ def caller(directory, command, stdin=None):
 SIMPLEDIR = r'./tests/data/simple'
 TREEDIR = r'./tests/data/tree'
 SYMLINKDIR = r'./tests/data/symlink'
-INFINITE_RECURSION_LINK=r'./tests/data/infinite_recursion'
+INFINITE_RECURSION_LINK = r'./tests/data/infinite_recursion'
+
 
 def helper_test_match(directory, command, stdout_shall, stderr_shall,
                       return_code_shall, stdin=None):
@@ -192,6 +193,8 @@ def test_recursion_text():
 def test_recursion_binary():
     helper_test_match(TREEDIR, '-R ll .',
                       'Binary file ./A/helloworld matches\n', '', 0)
+
+
 # Test symlinks
 # Warning: These will fail on OS that do not
 # support symlinks (for example # FAT32)
@@ -207,7 +210,17 @@ def test_symlink_do_not_follow_links():
 
 
 # infinite recursion tests
+@pytest.mark.skipif(True, reason="Not implemented yet")
 def test_infinite_symlink_do_not_follow_links():
     helper_test_match(INFINITE_RECURSION_LINK, '-r Zen .',
                       './outter/zen_of_python.txt:The Zen of Python, by Tim '
-                                               'Peters\n', '', 0)
+                      'Peters\n', '', 0)
+
+@pytest.mark.skipif(True, reason="Not implemented yet")
+def test_infinite_symlink_do_follow_links():
+    helper_test_match(INFINITE_RECURSION_LINK, '-R Zen .',
+                      './outter/zen_of_python.txt:The Zen of Python, by Tim '
+                      'Peters\n',
+                      'pwgrep: warning: ./outter/inner: recursive directory '
+                      'loop',
+                      0)
