@@ -47,7 +47,6 @@ def print_binary_match(filename):
     :param filename: filename to be printed
     :return:
     """
-
     print('Binary file {} matches'.format(filename))
 
 
