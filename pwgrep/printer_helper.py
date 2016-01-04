@@ -8,8 +8,8 @@ import string
 def colorize_match(match):
     """
     Colorizes matches in a line
-    @param match                regex match to be marked
-    @return string              colorized line
+    :param match: regex match to be marked
+    :return: colorized line
     """
     return '{}{}{}'.format(colors.ConsoleColors.MATCH, match.group(),
                            colors.ConsoleColors.ENDC)
@@ -18,8 +18,8 @@ def colorize_match(match):
 def colorize_filename(filename):
     """
     Colorizes filename
-    @param filename             filename to be colorized
-    @return string              colorized filename
+    :param filename: filename to be colorized
+    :return string: colorized filename
     """
     return '{}{}{}'.format(colors.ConsoleColors.FILE, filename,
                            colors.ConsoleColors.ENDC)
@@ -28,10 +28,11 @@ def colorize_filename(filename):
 def format_printline(filename, line, regex, color):
     """
     Colorizes a given string as a 'match'
-
-    @param string match         match to be colorized
-
-    @return string              colorized string
+    :param filename: filename with match
+    :param line: matched line
+    :param regex: regular expression used for search/colorization
+    :param color: if result shall be colorized
+    :return: filename, line
     """
     line = string.strip(line)
     if color:
@@ -43,19 +44,21 @@ def format_printline(filename, line, regex, color):
 def print_binary_match(filename):
     """
     Prints info for a match in a binary file
-    @param filename             filename to be printed
+    :param filename: filename to be printed
+    :return:
     """
+
     print('Binary file {} matches'.format(filename))
 
 
 def print_text_match(filename, line, regex, color, no_filename):
     """
     Prints info for a match in a textual file
-    @param filename             filename to be printed
-    @param line                 (matched) line to be printed
-    @param regex                regex to be printed/marked
-    @param color                output in color
-    @param no_filename          if the filename printing shall be suppressed
+    :param filename: filename to be printed
+    :param line: (matched) line to be printed
+    :param regex: regex to be printed/marked
+    :param color: output in color
+    :param no_filename: if the filename printing shall be suppressed
     """
     filename, line = format_printline(filename, line, regex, color)
     if no_filename:
