@@ -4,6 +4,8 @@
 import mimetypes
 import os
 
+import file_walker
+
 
 def file_is_binary(filename):
     type, _ = mimetypes.guess_type(filename)
@@ -15,7 +17,7 @@ def file_is_directory(filename):
 
 
 def recurse(directory, deference_recursive=False):
-    for root, dirs, files in os.walk(directory,
-                                     followlinks=deference_recursive):
-        for filename in files:
-            yield os.path.join(root, filename)
+    files = file_walker.symlink_walker(directory,
+                                       deference_recursive=deference_recursive)
+    for f in files:
+        yield f
