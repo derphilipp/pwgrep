@@ -48,12 +48,6 @@ def search_in_binary_file(filename, regex, invert_search):
     return False
 
 
-def filelist(startpoint):
-    # TODO Build in recursion etc.
-    for element in startpoint:
-        yield element
-
-
 def print_binary(filename):
     print('Binary file {} matches'.format(filename))
 
@@ -112,7 +106,7 @@ def main(args):
             any_match = True
             print_match('', line, regex, True, False, p.color)
 
-    for file in filelist(p.options.PATH):
+    for file in p.options.PATH:
         if file_helper.file_is_directory(file):
             if not (p.options.dereference_recursive or p.options.recursive):
                 print('pwgrep: {}: is a directory'.format(file))
