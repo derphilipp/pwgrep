@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from ..pwgrep import file_helper
-#import pwgrep
-print(__name__)
+
 
 def test_file_is_binary():
     print(__name__)
