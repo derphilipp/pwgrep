@@ -210,7 +210,6 @@ def test_symlink_do_not_follow_links():
 
 
 # infinite recursion tests
-@pytest.mark.skipif(True, reason="Not implemented yet")
 def test_infinite_symlink_do_not_follow_links():
     helper_test_match(INFINITE_RECURSION_LINK, '-r Zen .',
                       './outter/zen_of_python.txt:The Zen of Python, by Tim '
