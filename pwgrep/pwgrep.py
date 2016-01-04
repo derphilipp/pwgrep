@@ -60,10 +60,8 @@ def progress_files(files, regex, invert_match=False, color=False,
             if not (dereference_recursive or recursive):
                 print('pwgrep: {}: is a directory'.format(file))
             else:
-                for filename in \
-                    file_helper.traverse_recursively(
-                        file,
-                        dereference_recursive):
+                for filename in file_helper.recurse(file,
+                                                    dereference_recursive):
 
                     if search_in_file(filename, regex,
                                       invert_match,
@@ -99,10 +97,10 @@ if __name__ == "__main__":
     signal.signal(signal.SIGTERM, signal_terminal_handler)
 
     try:
-        result = main(sys.argv)
+        any_match = main(sys.argv)
     except KeyboardInterrupt:
         sys.exit(1)
 
-    if result:
+    if any_match:
         sys.exit(0)
     sys.exit(1)
