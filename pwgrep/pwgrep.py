@@ -11,12 +11,6 @@ import printer_helper
 import search_helper
 
 
-def build_regex(regex, ignore_case=False):
-    if ignore_case:
-        return re.compile(regex, flags=re.IGNORECASE)
-    return re.compile(regex)
-
-
 def print_match(filename, line, regex, no_filename=False,
                 file_is_binary=False, color=False, print_only_match=False):
     if file_is_binary:
@@ -51,9 +45,9 @@ def progress_stdin(regex, invert_match=False, color=False):
     return any_match
 
 
-def progress_files(files, regex, invert_match=False, color=False,
-                   recursive=False, dereference_recursive=False,
-                   no_filename=False):
+def progress_commandline(files, regex, invert_match=False, color=False,
+                         recursive=False, dereference_recursive=False,
+                         no_filename=False):
     any_match = False
     for file in files:
         if file_helper.file_is_directory(file):
@@ -77,16 +71,22 @@ def progress_files(files, regex, invert_match=False, color=False,
 
 def main(args):
     p = command_parser.CommandParser(args)
-    regex = build_regex(p.options.PATTERN[0], p.options.ignore_case)
+
+    regex_flags = 0
+    if p.options.ignore_case:
+        regex_flags |= re.IGNORECASE
+
+    regex = re.compile(p.options.PATTERN[0], regex_flags)
 
     if not p.options.PATH:
         return progress_stdin(regex, p.options.invert_match, p.color)
     else:
-        return progress_files(p.options.PATH, regex, p.options.invert_match,
-                              p.color,
-                              p.options.recursive,
-                              p.options.dereference_recursive,
-                              p.options.no_filename)
+        return progress_commandline(p.options.PATH, regex,
+                                    p.options.invert_match,
+                                    p.color,
+                                    p.options.recursive,
+                                    p.options.dereference_recursive,
+                                    p.options.no_filename)
 
 
 def signal_terminal_handler(signal_nr, frame):
