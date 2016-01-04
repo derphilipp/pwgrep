@@ -4,6 +4,7 @@
 import subprocess
 import pytest
 
+
 def caller(directory, command, stdin=None):
     proc = subprocess.Popen('../../../pwgrep/pwgrep.py {}'.format(command),
                             cwd=directory,
@@ -215,11 +216,11 @@ def test_infinite_symlink_do_not_follow_links():
                       './outter/zen_of_python.txt:The Zen of Python, by Tim '
                       'Peters\n', '', 0)
 
-@pytest.mark.skipif(True, reason="Not implemented yet")
+
 def test_infinite_symlink_do_follow_links():
     helper_test_match(INFINITE_RECURSION_LINK, '-R Zen .',
                       './outter/zen_of_python.txt:The Zen of Python, by Tim '
                       'Peters\n',
                       'pwgrep: warning: ./outter/inner: recursive directory '
-                      'loop',
+                      'loop\n',
                       0)

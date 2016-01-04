@@ -1,8 +1,9 @@
 #!/usr/bin/env python2.7
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
 import colors
-import string
+import sys
 
 
 def colorize_match(match):
@@ -34,7 +35,7 @@ def format_printline(filename, line, regex, color):
     :param color: if result shall be colorized
     :return: filename, line
     """
-    line = string.strip(line)
+    line = line.strip()
     if color:
         filename = colorize_filename(filename)
         line = regex.sub(colorize_match, line)
@@ -64,3 +65,13 @@ def print_text_match(filename, line, regex, color, no_filename):
         print(line)
     else:
         print('{}:{}'.format(filename, line))
+
+
+def print_loop_warning(filename):
+    """
+    Prints warning for a recursive directory loop
+    :param filename: filename to be printed
+    :return:
+    """
+    print('pwgrep: warning: {}: recursive directory loop'.format(filename),
+          file=sys.stderr)
