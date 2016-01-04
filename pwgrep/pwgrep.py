@@ -19,9 +19,9 @@ def build_regex(regex, ignore_case=False):
 
 def lines_from_file(filename):
     try:
-        file = open(filename, 'r')
-        for linenr, line in enumerate(file):
-            yield linenr, line
+        file_object = open(filename, 'r')
+        for line_nr, line in enumerate(file_object):
+            yield line_nr, line
     except IOError:
         if os.path.exists(filename):
             print ('pwgrep: {}: Permission denied'.format(filename))
@@ -30,9 +30,9 @@ def lines_from_file(filename):
 
 
 def search_in_stdin(regex, invert_search):
-    for linenr, line in enumerate(sys.stdin):
+    for line_nr, line in enumerate(sys.stdin):
         if invert_search != bool(regex.search(line)):
-            yield linenr, line
+            yield line_nr, line
 
 
 def search_in_text_file(filename, regex, invert_search):
@@ -52,7 +52,20 @@ def print_binary(filename):
     print('Binary file {} matches'.format(filename))
 
 
-def replacement(match):
+def print_match(filename, line, regex, no_filename=False,
+                file_is_binary=False, color=False, print_only_match=False):
+    if file_is_binary:
+        print_binary(filename)
+        return
+
+    filename, line = format_printline(filename, line, regex, color)
+    if no_filename:
+        print(line)
+    else:
+        print('{}:{}'.format(filename, line))
+
+
+def colorize_match(match):
     return '{}{}{}'.format(colors.bcolors.MATCH, match.group(),
                            colors.bcolors.ENDC)
 
@@ -61,75 +74,73 @@ def format_printline(filename, line, regex, color):
     line = string.strip(line)
     if color:
         filename = colors.bcolors.CYAN + filename + colors.bcolors.ENDC
-        line = regex.sub(replacement, line)
+        line = regex.sub(colorize_match, line)
     return filename, line
 
 
-def print_match(filename, line, regex, do_not_display_filename=False,
-                file_is_binary=False, color=False, print_only_match=False):
-    if file_is_binary:
-        print_binary(filename)
-        return
-
-    filename, line = format_printline(filename, line, regex, color)
-    if do_not_display_filename:
-        print(line)
-    else:
-        print('{}:{}'.format(filename, line))
-
-
-def search_in_file(filename, regex, invert_match, discard_filename,
+def search_in_file(filename, regex, invert_match, no_filename,
                    color):
     any_match = False
     if file_helper.file_is_binary(filename):
         if search_in_binary_file(filename, regex, invert_match):
             any_match = True
-            print_match(filename, None, regex, discard_filename,
+            print_match(filename, None, regex, no_filename,
                         True, color)
     else:
         for linenr, line in search_in_text_file(filename, regex,
                                                 invert_match):
             any_match = True
-            print_match(filename, line, regex, discard_filename,
+            print_match(filename, line, regex, no_filename,
                         False, color)
     return any_match
 
 
-def main(args):
-
-    p = command_parser.CommandParser(args)
-    regex = build_regex(p.options.PATTERN[0], p.options.ignore_case)
+def progress_stdin(regex, invert_match=False, color=False):
     any_match = False
+    for linenr, line in search_in_stdin(regex, invert_match):
+        any_match = True
+        print_match('', line, regex, True, False, color)
+    return any_match
 
-    if not p.options.PATH:
-        for linenr, line in search_in_stdin(regex, p.options.invert_match):
-            any_match = True
-            print_match('', line, regex, True, False, p.color)
 
-    for file in p.options.PATH:
+def progress_files(files, regex, invert_match=False, color=False,
+                   recursive=False, dereference_recursive=False,
+                   no_filename=False):
+    any_match = False
+    for file in files:
         if file_helper.file_is_directory(file):
-            if not (p.options.dereference_recursive or p.options.recursive):
+            if not (dereference_recursive or recursive):
                 print('pwgrep: {}: is a directory'.format(file))
             else:
                 for filename in \
                     file_helper.traverse_recursively(
                         file,
-                        p.options.dereference_recursive):
+                        dereference_recursive):
 
                     if search_in_file(filename, regex,
-                                      p.options.invert_match,
-                                      p.options.no_filename, p.color):
+                                      invert_match,
+                                      no_filename, color):
                         any_match = True
 
         else:
-            if search_in_file(file, regex, p.options.invert_match,
-                              p.options.no_filename, p.color):
+            if search_in_file(file, regex, invert_match,
+                              no_filename, color):
                 any_match = True
+    return any_match
 
-    if any_match:
-        return 0
+
+def main(args):
+    p = command_parser.CommandParser(args)
+    regex = build_regex(p.options.PATTERN[0], p.options.ignore_case)
+
+    if not p.options.PATH:
+        return progress_stdin(regex, p.options.invert_match, p.color)
     else:
-        return 1
+        return progress_files(p.options.PATH, regex, p.options.invert_match,
+                              p.color,
+                              p.options.recursive,
+                              p.options.dereference_recursive,
+                              p.options.no_filename)
 
 
 def signal_terminal_handler(signal_nr, frame):
@@ -144,4 +155,6 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         sys.exit(1)
 
-    sys.exit(result)
+    if result:
+        sys.exit(0)
+    sys.exit(1)
