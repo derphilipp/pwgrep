@@ -14,7 +14,7 @@ def file_is_directory(filename):
     return os.path.isdir(filename)
 
 
-def traverse_recursively(directory, deference_recursive=False):
+def recurse(directory, deference_recursive=False):
     for root, dirs, files in os.walk(directory,
                                      followlinks=deference_recursive):
         for filename in files:
