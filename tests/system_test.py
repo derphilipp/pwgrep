@@ -127,15 +127,13 @@ zen_of_python.txt:Unless explicitly silenced.
 
 
 # --info
-@pytest.mark.skipif(sys.version_info < (3, 4) or
-                    platform.python_implementation() == 'PyPy',
+@pytest.mark.skipif(sys.version_info < (3, 4),
                     reason="Before Python 3.4, --info writes to stderr")
 def test_version_to_stdout():
     helper_test_match(SIMPLEDIR, '--version', 'pwgrep 0.0.1\n', '', 0)
 
 
-@pytest.mark.skipif(not(sys.version_info < (3, 4) or
-                    platform.python_implementation() == 'PyPy'),
+@pytest.mark.skipif(not (sys.version_info < (3, 4)),
                     reason="On and after Python 3.4, --info writes to stdout")
 def test_version_to_stderr():
     helper_test_match(SIMPLEDIR, '--version', '', 'pwgrep 0.0.1\n', 0)
