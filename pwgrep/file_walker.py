@@ -4,7 +4,7 @@
 import os
 import collections
 
-import printer_helper
+from pwgrep import printer_helper
 
 WalkedDir = collections.namedtuple("WalkedDir", "path subdirs files depth")
 

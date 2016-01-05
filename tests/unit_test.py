@@ -1,11 +1,7 @@
 #!/usr/bin/env python2.7
 # -*- coding: utf-8 -*-
 
-import pytest
-
-
-import file_helper
-#from pwgrep import file_helper
+from pwgrep import file_helper
 
 
 def test_file_is_binary():

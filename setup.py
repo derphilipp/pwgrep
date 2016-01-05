@@ -28,8 +28,8 @@ setup(
             ],
         entry_points={
             'console_scripts': [
-                'pwgrep = pwgrep.pwgrep:main'
-                ]
+                'pwgrep = pwgrep.program:main'
+                ],
             },
         classifiers=[
             'Programming Language :: Python :: 2.7 :: Only',

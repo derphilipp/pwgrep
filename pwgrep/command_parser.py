@@ -4,11 +4,11 @@ import argparse
 import os
 import sys
 
-import command_parser_text
-import version
+from pwgrep import command_parser_text
+from pwgrep import version
 
 
-def check_color(value):
+def validate_color(value):
     if value not in ['always', 'never', 'auto']:
         raise argparse.ArgumentTypeError("{} is not a valid color "
                                          "option".format(value))
@@ -17,7 +17,7 @@ def check_color(value):
 
 class CommandParser(object):
     def __init__(self, args):
-        self._parser = argparse.ArgumentParser(add_help=False)
+        self._parser = argparse.ArgumentParser(prog='pwgrep', add_help=False)
 
         self._parser.add_argument(
             '-R', '--dereference-recursive',
@@ -52,7 +52,7 @@ class CommandParser(object):
 
         self._parser.add_argument(
             '--color', nargs='?', default='never',
-            type=check_color,
+            type=validate_color,
             help=command_parser_text.COLOR
         )
 
@@ -68,14 +68,13 @@ class CommandParser(object):
         )
         self._parser.add_argument(
             '--version',
-            action='version', version='%(prog)s {}'.format(version.VERSION)
+            action='version', version='pwgrep {}'.format(version.VERSION)
         )
         self._parser.add_argument(
             '--help',
             action='help', help=command_parser_text.HELP
         )
         self.options = self._parser.parse_args(args[1:])
-        # self.options = self._parser.parse_known_args(args[1:])[0]
 
     @property
     def color(self):
@@ -83,5 +82,5 @@ class CommandParser(object):
             return False
         if self.options.color == 'always':
             return True
-        # must be 'auto'
+        # must be 'auto' at this point
         return os.isatty(sys.stdout.fileno())
