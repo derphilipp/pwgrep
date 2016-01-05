@@ -1,7 +1,6 @@
 #!/usr/bin/env python2.7
 # -*- coding: utf-8 -*-
 
-import platform
 import pytest
 import subprocess
 import sys
