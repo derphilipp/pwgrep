@@ -12,9 +12,9 @@ def lines_from_file(filename):
     :return line_number, line: (yields) line number, line of file to be read
     """
     try:
-        file_object = open(filename, 'r')
-        for line_nr, line in enumerate(file_object):
-            yield line_nr, line
+        with open(filename, 'rU') as file_object:
+            for line_nr, line in enumerate(file_object):
+                yield line_nr, line
     except IOError:
         if os.path.exists(filename):
             print ('pwgrep: {}: Permission denied'.format(filename))
@@ -58,7 +58,14 @@ def search_in_binary_file(filename, regex, invert_match):
                          (i.e. non-matches shall match)
     :return match_was_found: if a match was found
     """
-    for _, line in lines_from_file(filename):
-        if invert_match != bool(regex.search(line)):
-            return True
-    return False
+    try:
+        with open(filename, 'rb+') as f:
+            for line_nr, line in enumerate(f):
+                if invert_match != bool(regex.search(line)):
+                    return True
+            return False
+    except IOError:
+        if os.path.exists(filename):
+            print ('pwgrep: {}: Permission denied'.format(filename))
+        else:
+            print ('pwgrep: {}: No such file or directory'.format(filename))

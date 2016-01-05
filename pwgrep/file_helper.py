@@ -4,12 +4,12 @@
 import mimetypes
 import os
 
-import file_walker
+from pwgrep import file_walker
 
 
 def file_is_binary(filename):
-    type, _ = mimetypes.guess_type(filename)
-    return type is None or not type.startswith('text')
+    file_type, _ = mimetypes.guess_type(filename)
+    return file_type is None or not file_type.startswith('text')
 
 
 def file_is_directory(filename):

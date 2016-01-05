@@ -1,12 +1,14 @@
 #!/usr/bin/env python2.7
 # -*- coding: utf-8 -*-
 
-import subprocess
+import platform
 import pytest
+import subprocess
+import sys
 
 
 def caller(directory, command, stdin=None):
-    proc = subprocess.Popen('../../../pwgrep/pwgrep.py {}'.format(command),
+    proc = subprocess.Popen('pwgrep {}'.format(command),
                             cwd=directory,
                             stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE,
@@ -21,18 +23,18 @@ def caller(directory, command, stdin=None):
     return code, stdout, stderr
 
 
-SIMPLEDIR = r'./tests/data/simple'
-TREEDIR = r'./tests/data/tree'
-SYMLINKDIR = r'./tests/data/symlink'
-INFINITE_RECURSION_LINK = r'./tests/data/infinite_recursion'
+SIMPLEDIR = r'tests/data/simple'
+TREEDIR = r'tests/data/tree'
+SYMLINKDIR = r'tests/data/symlink'
+INFINITE_RECURSION_LINK = r'tests/data/infinite_recursion'
 
 
 def helper_test_match(directory, command, stdout_shall, stderr_shall,
                       return_code_shall, stdin=None):
     return_code_is, stdout_is, stderr_is = caller(directory, command, stdin)
-    assert stderr_is.decode("utf-8") == (stderr_shall)
-    assert stdout_is.decode("utf-8") == (stdout_shall)
-    assert return_code_is == (return_code_shall)
+    assert stderr_is.decode("utf-8") == stderr_shall
+    assert stdout_is.decode("utf-8") == stdout_shall
+    assert return_code_is == return_code_shall
 
 
 # Basic Search
@@ -125,9 +127,16 @@ zen_of_python.txt:Unless explicitly silenced.
 
 
 # --info
-def test_version():
-    # argparse prints '--version' to stderr due to compatibility reasons
-    helper_test_match(SIMPLEDIR, '--version', '', 'pwgrep.py 0.0.1\n', 0)
+@pytest.mark.skipif(sys.version_info < (3, 3),
+                    reason="Before Python 3.3, --info writes to stderr")
+def test_version_to_stdout():
+    helper_test_match(SIMPLEDIR, '--version', 'pwgrep 0.0.1\n', '', 0)
+
+
+@pytest.mark.skipif(sys.version_info >= (3, 3),
+                    reason="On and after Python 3.3, --info writes to stdout")
+def test_version_to_stderr():
+    helper_test_match(SIMPLEDIR, '--version', '', 'pwgrep 0.0.1\n', 0)
 
 
 # color output
@@ -156,10 +165,10 @@ def test_color_auto_color():
 
 def test_color_wrong_option():
     # argparse exits with exit code 2 ('incorrect usage')
-    expected_stderr = """usage: pwgrep.py [-R] [-r] [-h] [-i] [-v] [-o] [--color [COLOR]] [--version]
-                 [--help]
-                 PATTERN [PATH [PATH ...]]
-pwgrep.py: error: argument --color: unrecognized is not a valid color option
+    expected_stderr = """usage: pwgrep [-R] [-r] [-h] [-i] [-v] [-o] [--color [COLOR]] [--version]
+              [--help]
+              PATTERN [PATH [PATH ...]]
+pwgrep: error: argument --color: unrecognized is not a valid color option
 """
     helper_test_match(SIMPLEDIR, '--color=unrecognized foo *',
                       '', expected_stderr, 2)

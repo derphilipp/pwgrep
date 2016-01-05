@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function
-import colors
 import sys
+
+from pwgrep import colors
 
 
 def colorize_match(match):
