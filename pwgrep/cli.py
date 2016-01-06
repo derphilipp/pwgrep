@@ -148,11 +148,11 @@ def signal_terminal_handler(signal_nr, frame):
     sys.exit(128 + signal_nr)
 
 
-def main():
+def main(args=sys.argv):
     signal.signal(signal.SIGTERM, signal_terminal_handler)
 
     try:
-        any_match = run(sys.argv)
+        any_match = run(args)
     except KeyboardInterrupt:
         sys.exit(1)
 
