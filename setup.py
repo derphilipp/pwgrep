@@ -28,7 +28,7 @@ setup(
             ],
         entry_points={
             'console_scripts': [
-                'pwgrep = pwgrep.program:main'
+                'pwgrep = pwgrep.cli:main'
                 ],
             },
         classifiers=[
