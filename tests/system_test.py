@@ -22,10 +22,10 @@ def caller(directory, command, stdin=None):
     return code, stdout, stderr
 
 
-SIMPLEDIR = r'pwgrep/tests/data/simple'
-TREEDIR = r'pwgrep/tests/data/tree'
-SYMLINKDIR = r'pwgrep/tests/data/symlink'
-INFINITE_RECURSION_LINK = r'pwgrep/tests/data/infinite_recursion'
+SIMPLEDIR = r'tests/data/simple'
+TREEDIR = r'tests/data/tree'
+SYMLINKDIR = r'tests/data/symlink'
+INFINITE_RECURSION_LINK = r'tests/data/infinite_recursion'
 
 
 def helper_test_match(directory, command, stdout_shall, stderr_shall,
