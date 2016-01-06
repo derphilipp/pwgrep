@@ -7,6 +7,7 @@ clean:
 	find . -name '*.pyo' -exec rm -f {} +
 	find . -name '*~' -exec rm -f {} +
 	rm -rf .tox
+	rm -f .coverage coverage.xml
 
 editable:
 	pip install --editable .
