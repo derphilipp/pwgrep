@@ -80,7 +80,8 @@ def test_file_not_readable(tmpdir):
     file.chmod(0)
     filename = str(file)
     helper_test_match(SIMPLEDIR, 'readable {}'.format(filename),
-                      'pwgrep: {}: Permission denied\n'.format(filename), '', 1)
+                      'pwgrep: {}: Permission denied\n'.format(filename),
+                      '', 1)
 
 
 # io error, file does not exist
@@ -142,7 +143,8 @@ def test_version_to_stderr():
 def test_color_simple():
     expected_stdout = r'[96mzen_of_python.txt[0m:The [1m[91mZen[0m of Python, ' \
                       'by Tim Peters\n'
-    helper_test_match(SIMPLEDIR, '--color=always Zen *', expected_stdout, '', 0)
+    helper_test_match(SIMPLEDIR, '--color=always Zen *',
+                      expected_stdout, '', 0)
 
 
 def test_color_readability():
@@ -211,7 +213,8 @@ def test_recursion_binary():
 # recursion
 def test_symlink_follow_links():
     helper_test_match(SYMLINKDIR, '-R ll .',
-                      'Binary file ./linked_tree/A/helloworld matches\n', '', 0)
+                      'Binary file ./linked_tree/A/helloworld matches\n',
+                      '', 0)
 
 
 def test_symlink_do_not_follow_links():
