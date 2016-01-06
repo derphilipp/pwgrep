@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 IGNORE_CASE = u'Ignore case distinctions, so that characters that differ only' \
