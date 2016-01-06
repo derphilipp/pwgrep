@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from pwgrep.program import main
+from pwgrep.cli import main
 
 
 main()
