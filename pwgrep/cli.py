@@ -50,9 +50,8 @@ def search_in_file(filename, regex_txt, regex_bin, invert_match, no_filename,
             print_match(filename, None, None, no_filename,
                         True, color)
     else:
-        for line_number, line in \
-            search_helper.search_in_text_file(filename, regex_txt,
-                                              invert_match):
+        for _, line in search_helper.search_in_text_file(filename, regex_txt,
+                                                         invert_match):
             match_occurred = True
             print_match(filename, line, regex_txt, no_filename,
                         False, color)
@@ -68,7 +67,7 @@ def process_stdin(regex, invert_match=False, color=False):
     :return: If any match occurred
     """
     match_occurred = False
-    for line_nr, line in search_helper.search_in_stdin(regex, invert_match):
+    for _, line in search_helper.search_in_stdin(regex, invert_match):
         match_occurred = True
         print_match('', line, regex, True, False, color)
     return match_occurred
@@ -118,26 +117,27 @@ def run(args):
     :param args: command line parameters (except [0], i.e. program name)
     :return: if any match was found in file
     """
-    p = command_parser.CommandParser(args)
+    parser = command_parser.CommandParser(args)
 
     regex_flags = 0
-    if p.options.ignore_case:
+    if parser.options.ignore_case:
         regex_flags |= re.IGNORECASE
-    regex_txt = re.compile(p.options.PATTERN[0], regex_flags)
-    regex_bin = re.compile(str.encode(p.options.PATTERN[0]),
+    regex_txt = re.compile(parser.options.PATTERN[0], regex_flags)
+    regex_bin = re.compile(str.encode(parser.options.PATTERN[0]),
                            regex_flags)
 
-    if not p.options.PATH:
-        return process_stdin(regex_txt, p.options.invert_match, p.color)
+    if not parser.options.PATH:
+        return process_stdin(regex_txt, parser.options.invert_match,
+                             parser.color)
     else:
-        return process_commandline(p.options.PATH,
+        return process_commandline(parser.options.PATH,
                                    regex_txt,
                                    regex_bin,
-                                   p.options.invert_match,
-                                   p.color,
-                                   p.options.recursive,
-                                   p.options.dereference_recursive,
-                                   p.options.no_filename)
+                                   parser.options.invert_match,
+                                   parser.color,
+                                   parser.options.recursive,
+                                   parser.options.dereference_recursive,
+                                   parser.options.no_filename)
 
 
 def signal_terminal_handler(signal_nr, frame):

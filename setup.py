@@ -18,7 +18,6 @@ setup(
         url='https://github.com/derphilipp/pwgrep',
         license='MIT',
         platforms='ALL',
-        #long_description=_read('README.md'),
         packages=[
             'pwgrep',
             ],

@@ -75,10 +75,10 @@ def test_binary_match_ignore_case():
 
 # io error, file not readable
 def test_file_not_readable(tmpdir):
-    file = tmpdir.join('unreadable.txt')
-    file.write('This file is not readable')
-    file.chmod(0)
-    filename = str(file)
+    file_object = tmpdir.join('unreadable.txt')
+    file_object.write('This file is not readable')
+    file_object.chmod(0)
+    filename = str(file_object)
     helper_test_match(SIMPLEDIR, 'readable {}'.format(filename),
                       'pwgrep: {}: Permission denied\n'.format(filename),
                       '', 1)
@@ -141,8 +141,8 @@ def test_version_to_stderr():
 
 # color output
 def test_color_simple():
-    expected_stdout = r'[96mzen_of_python.txt[0m:The [1m[91mZen[0m of Python, ' \
-                      'by Tim Peters\n'
+    expected_stdout = r'[96mzen_of_python.txt[0m:The [1m[91mZen[0m of ' \
+                      'Python, by Tim Peters\n'
     helper_test_match(SIMPLEDIR, '--color=always Zen *',
                       expected_stdout, '', 0)
 

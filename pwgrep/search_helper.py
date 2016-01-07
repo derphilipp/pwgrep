@@ -59,8 +59,8 @@ def search_in_binary_file(filename, regex, invert_match):
     :return match_was_found: if a match was found
     """
     try:
-        with open(filename, 'rb+') as f:
-            for line_nr, line in enumerate(f):
+        with open(filename, 'rb+') as file_object:
+            for _, line in enumerate(file_object):
                 if invert_match != bool(regex.search(line)):
                     return True
             return False

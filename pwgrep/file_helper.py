@@ -19,5 +19,5 @@ def file_is_directory(filename):
 def recurse(directory, deference_recursive=False):
     files = file_walker.symlink_walker(directory,
                                        deference_recursive=deference_recursive)
-    for f in files:
-        yield f
+    for file_name in files:
+        yield file_name
