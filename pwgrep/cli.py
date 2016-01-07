@@ -6,109 +6,7 @@ import signal
 import sys
 
 from pwgrep import command_parser
-from pwgrep import file_helper
-from pwgrep import printer_helper
-from pwgrep import search_helper
-
-
-def print_match(filename, line, regex, no_filename=False,
-                file_is_binary=False, color=False):
-    """
-    Prints matches from files
-    :param filename: filename of match
-    :param line: complete line of match
-    :param regex: regular expression used
-    :param no_filename: if printing of filename shall be suppressed
-    :param file_is_binary: if file is binary
-    :param color: if output shall be colorized
-    :return:
-    """
-    if file_is_binary:
-        printer_helper.print_binary_match(filename)
-    else:
-        printer_helper.print_text_match(filename, line, regex, color,
-                                        no_filename)
-
-
-def search_in_file(filename, regex_txt, regex_bin, invert_match, no_filename,
-                   color):
-    """
-    Searches and prints matches of a given file
-    :param filename: filename to be searched in
-    :param regex_txt: Regex used for matching text
-    :param regex_bin: Regex used for matching binary
-    :param invert_match: if matches shall be inverted
-    :param no_filename: if printing of filename shall be suppressed
-    :param color: if output shall be colorized
-    :return:
-    """
-    match_occurred = False
-    if file_helper.file_is_binary(filename):
-        if search_helper.search_in_binary_file(filename, regex_bin,
-                                               invert_match):
-            match_occurred = True
-            print_match(filename, None, None, no_filename,
-                        True, color)
-    else:
-        for _, line in search_helper.search_in_text_file(filename, regex_txt,
-                                                         invert_match):
-            match_occurred = True
-            print_match(filename, line, regex_txt, no_filename,
-                        False, color)
-    return match_occurred
-
-
-def process_stdin(regex, invert_match=False, color=False):
-    """
-    Processes grep operation on stdin
-    :param regex: Regex used for matching text
-    :param invert_match: If match result shall be inversed
-    :param color: If output shall be colored
-    :return: If any match occurred
-    """
-    match_occurred = False
-    for _, line in search_helper.search_in_stdin(regex, invert_match):
-        match_occurred = True
-        print_match('', line, regex, True, False, color)
-    return match_occurred
-
-
-def process_commandline(files, regex_txt, regex_bin, invert_match=False,
-                        color=False,
-                        recursive=False, dereference_recursive=False,
-                        no_filename=False):
-    """
-    Processes grep operation on stdin
-    :param files: Files to be processed
-    :param regex_txt: Regex used for matching text
-    :param regex_bin: Regex used for matching binary
-    :param invert_match: If match result shall be inversed
-    :param color: If output shall be colored
-    :param recursive: If recursion shall be used on directories
-    :param dereference_recursive: If recursion shall be used on directories,
-    following symlinks
-    :param no_filename: If printing of filename shall be suppressed
-    :return: If any match occurred
-    """
-    match_occurred = False
-    for file_name in files:
-        if file_helper.file_is_directory(file_name):
-            if not (dereference_recursive or recursive):
-                printer_helper.print_is_directory(file_name)
-            else:
-                for filename in file_helper.recurse(file_name,
-                                                    dereference_recursive):
-
-                    if search_in_file(filename, regex_txt, regex_bin,
-                                      invert_match,
-                                      no_filename, color):
-                        match_occurred = True
-
-        else:
-            if search_in_file(file_name, regex_txt, regex_bin, invert_match,
-                              no_filename, color):
-                match_occurred = True
-    return match_occurred
+from pwgrep import process
 
 
 def run(args):
@@ -127,17 +25,17 @@ def run(args):
                            regex_flags)
 
     if not parser.options.PATH:
-        return process_stdin(regex_txt, parser.options.invert_match,
-                             parser.color)
+        return process.process_stdin(regex_txt, parser.options.invert_match,
+                                     parser.color)
     else:
-        return process_commandline(parser.options.PATH,
-                                   regex_txt,
-                                   regex_bin,
-                                   parser.options.invert_match,
-                                   parser.color,
-                                   parser.options.recursive,
-                                   parser.options.dereference_recursive,
-                                   parser.options.no_filename)
+        return process.process_commandline(parser.options.PATH,
+                                           regex_txt,
+                                           regex_bin,
+                                           parser.options.invert_match,
+                                           parser.color,
+                                           parser.options.recursive,
+                                           parser.options.dereference_recursive,
+                                           parser.options.no_filename)
 
 
 def signal_terminal_handler(signal_nr, frame):
@@ -150,7 +48,7 @@ def signal_terminal_handler(signal_nr, frame):
     sys.exit(128 + signal_nr)
 
 
-def main(args=sys.argv):
+def main(args=sys.argv[1:]):
     signal.signal(signal.SIGTERM, signal_terminal_handler)
 
     try:

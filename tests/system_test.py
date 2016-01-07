@@ -85,7 +85,7 @@ def test_file_not_readable(tmpdir):
 
 
 # io error, file does not exist
-def test_file_does_not_exist(tmpdir):
+def test_file_does_not_exist():
     helper_test_match(SIMPLEDIR, 'search does_not_exist',
                       'pwgrep: does_not_exist: No such file or directory\n',
                       '', 1)
@@ -100,7 +100,7 @@ def test_file_is_directory(tmpdir):
                       '', 1)
 
 
-def test_current_dir_is_directory(tmpdir):
+def test_current_dir_is_directory():
     helper_test_match(SIMPLEDIR, 'directory .',
                       'pwgrep: .: is a directory\n', '', 1)
 

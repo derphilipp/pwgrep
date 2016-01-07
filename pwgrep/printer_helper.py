@@ -85,3 +85,21 @@ def print_is_directory(dir_name):
     :return:
     """
     print('pwgrep: {}: is a directory'.format(dir_name))
+
+
+def print_match(filename, line, regex, no_filename=False,
+                file_is_binary=False, color=False):
+    """
+    Prints matches from files
+    :param filename: filename of match
+    :param line: complete line of match
+    :param regex: regular expression used
+    :param no_filename: if printing of filename shall be suppressed
+    :param file_is_binary: if file is binary
+    :param color: if output shall be colorized
+    :return:
+    """
+    if file_is_binary:
+        print_binary_match(filename)
+    else:
+        print_text_match(filename, line, regex, color, no_filename)
