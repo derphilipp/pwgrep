@@ -35,7 +35,8 @@ def search_in_file(filename, regex_txt, regex_bin, invert_match, no_filename,
     """
     Searches and prints matches of a given file
     :param filename: filename to be searched in
-    :param regex: regular expression for search
+    :param regex_txt: Regex used for matching text
+    :param regex_bin: Regex used for matching binary
     :param invert_match: if matches shall be inverted
     :param no_filename: if printing of filename shall be suppressed
     :param color: if output shall be colorized
@@ -61,7 +62,7 @@ def search_in_file(filename, regex_txt, regex_bin, invert_match, no_filename,
 def process_stdin(regex, invert_match=False, color=False):
     """
     Processes grep operation on stdin
-    :param regex: Regex used for matching
+    :param regex: Regex used for matching text
     :param invert_match: If match result shall be inversed
     :param color: If output shall be colored
     :return: If any match occurred
@@ -80,7 +81,8 @@ def process_commandline(files, regex_txt, regex_bin, invert_match=False,
     """
     Processes grep operation on stdin
     :param files: Files to be processed
-    :param regex: Regex used for matching
+    :param regex_txt: Regex used for matching text
+    :param regex_bin: Regex used for matching binary
     :param invert_match: If match result shall be inversed
     :param color: If output shall be colored
     :param recursive: If recursion shall be used on directories
