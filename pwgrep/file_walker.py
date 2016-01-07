@@ -43,7 +43,5 @@ def symlink_walker(directory, deference_recursive=False, onerror=None):
                 printer_helper.print_loop_warning(path)
                 walk_subdirs[:] = []
                 continue
-        subdirs = walk_subdirs[:]
         for f in files:
             yield os.path.join(path, f)
-        walk_subdirs[:] = subdirs
