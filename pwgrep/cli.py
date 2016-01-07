@@ -90,12 +90,12 @@ def process_commandline(files, regex_txt, regex_bin, invert_match=False,
     :return: If any match occurred
     """
     match_occurred = False
-    for file in files:
-        if file_helper.file_is_directory(file):
+    for file_name in files:
+        if file_helper.file_is_directory(file_name):
             if not (dereference_recursive or recursive):
-                print('pwgrep: {}: is a directory'.format(file))
+                printer_helper.print_is_directory(file_name)
             else:
-                for filename in file_helper.recurse(file,
+                for filename in file_helper.recurse(file_name,
                                                     dereference_recursive):
 
                     if search_in_file(filename, regex_txt, regex_bin,
@@ -104,7 +104,7 @@ def process_commandline(files, regex_txt, regex_bin, invert_match=False,
                         match_occurred = True
 
         else:
-            if search_in_file(file, regex_txt, regex_bin, invert_match,
+            if search_in_file(file_name, regex_txt, regex_bin, invert_match,
                               no_filename, color):
                 match_occurred = True
     return match_occurred

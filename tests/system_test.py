@@ -208,7 +208,7 @@ def test_recursion_binary():
 
 # Test symlinks
 # Warning: These will fail on OS that do not
-# support symlinks (for example # FAT32)
+# support symlinks (for example FAT32)
 
 # recursion
 def test_symlink_follow_links():

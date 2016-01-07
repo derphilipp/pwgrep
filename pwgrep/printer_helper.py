@@ -17,20 +17,20 @@ def colorize_match(match):
                            colors.ConsoleColors.ENDC)
 
 
-def colorize_filename(filename):
+def colorize_filename(file_name):
     """
     Colorizes filename
-    :param filename: filename to be colorized
+    :param file_name: filename to be colorized
     :return string: colorized filename
     """
-    return '{}{}{}'.format(colors.ConsoleColors.FILE, filename,
+    return '{}{}{}'.format(colors.ConsoleColors.FILE, file_name,
                            colors.ConsoleColors.ENDC)
 
 
-def format_printline(filename, line, regex, color):
+def format_printline(file_name, line, regex, color):
     """
     Colorizes a given string as a 'match'
-    :param filename: filename with match
+    :param file_name: filename with match
     :param line: matched line
     :param regex: regular expression used for search/colorization
     :param color: if result shall be colorized
@@ -38,41 +38,50 @@ def format_printline(filename, line, regex, color):
     """
     line = line.strip()
     if color:
-        filename = colorize_filename(filename)
+        file_name = colorize_filename(file_name)
         line = regex.sub(colorize_match, line)
-    return filename, line
+    return file_name, line
 
 
-def print_binary_match(filename):
+def print_binary_match(file_name):
     """
     Prints info for a match in a binary file
-    :param filename: filename to be printed
+    :param file_name: filename to be printed
     :return:
     """
-    print('Binary file {} matches'.format(filename))
+    print('Binary file {} matches'.format(file_name))
 
 
-def print_text_match(filename, line, regex, color, no_filename):
+def print_text_match(file_name, line, regex, color, no_filename):
     """
     Prints info for a match in a textual file
-    :param filename: filename to be printed
+    :param file_name: filename to be printed
     :param line: (matched) line to be printed
     :param regex: regex to be printed/marked
     :param color: output in color
     :param no_filename: if the filename printing shall be suppressed
     """
-    filename, line = format_printline(filename, line, regex, color)
+    file_name, line = format_printline(file_name, line, regex, color)
     if no_filename:
         print(line)
     else:
-        print('{}:{}'.format(filename, line))
+        print('{}:{}'.format(file_name, line))
 
 
-def print_loop_warning(filename):
+def print_loop_warning(file_name):
     """
     Prints warning for a recursive directory loop
-    :param filename: filename to be printed
+    :param file_name: filename to be printed
     :return:
     """
-    print('pwgrep: warning: {}: recursive directory loop'.format(filename),
+    print('pwgrep: warning: {}: recursive directory loop'.format(file_name),
           file=sys.stderr)
+
+
+def print_is_directory(dir_name):
+    """
+    Prints warning for trying to search a directory without recursion
+    :param dir_name: directoryname to be printed
+    :return:
+    """
+    print('pwgrep: {}: is a directory'.format(dir_name))
