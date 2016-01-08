@@ -164,15 +164,25 @@ def test_color_auto_color():
     helper_test_match(SIMPLEDIR, '--color=auto Zen *', expected_stdout, '', 0)
 
 
+# Wrong options
 def test_color_wrong_option():
     # argparse exits with exit code 2 ('incorrect usage')
-    expected_stderr = """usage: pwgrep [-R] [-r] [-h] [-i] [-v] [-o] [--color [COLOR]] [--version]
+    expected_stderr = """usage: pwgrep [-R | -r] [-h] [-i] [-v] [-o] [--color [COLOR]] [--version]
               [--help]
               PATTERN [PATH [PATH ...]]
 pwgrep: error: argument --color: unrecognized is not a valid color option
 """
     helper_test_match(SIMPLEDIR, '--color=unrecognized foo *',
                       '', expected_stderr, 2)
+
+
+def test_regex_wrong_option():
+    expected_stderr = """usage: pwgrep [-R | -r] [-h] [-i] [-v] [-o] [--color [COLOR]] [--version]
+              [--help]
+              PATTERN [PATH [PATH ...]]
+pwgrep: error: argument -r/--recursive: not allowed with argument -R/--dereference-recursive
+"""
+    helper_test_match(SIMPLEDIR, '-R -r Hello .', '', expected_stderr, 2)
 
 
 # stdin

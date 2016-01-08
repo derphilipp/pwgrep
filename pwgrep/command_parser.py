@@ -12,15 +12,18 @@ class CommandParser(object):
     def __init__(self, args):
         self._parser = argparse.ArgumentParser(prog='pwgrep', add_help=False)
 
-        self._parser.add_argument(
+        recursion_group = self._parser.add_mutually_exclusive_group()
+
+        recursion_group.add_argument(
             '-R', '--dereference-recursive',
             action='store_true',
             help=command_parser_text.DEREFERENCE_RECURSIVE
         )
-        self._parser.add_argument(
+        recursion_group.add_argument(
             '-r', '--recursive',
             action='store_true',
             help=command_parser_text.RECURSIVE)
+
         self._parser.add_argument(
             '-h', '--no-filename',
             action='store_true',
