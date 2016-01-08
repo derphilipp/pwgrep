@@ -28,14 +28,15 @@ def run(args):
         return process.process_stdin(regex_txt, parser.options.invert_match,
                                      parser.color)
     else:
-        return process.process_commandline(parser.options.PATH,
-                                           regex_txt,
-                                           regex_bin,
-                                           parser.options.invert_match,
-                                           parser.color,
-                                           parser.options.recursive,
-                                           parser.options.dereference_recursive,
-                                           parser.options.no_filename)
+        return process.process_commandline(
+            parser.options.PATH,
+            regex_txt,
+            regex_bin,
+            parser.options.invert_match,
+            parser.color,
+            parser.options.recursive,
+            parser.options.dereference_recursive,
+            parser.options.no_filename)
 
 
 def signal_terminal_handler(signal_nr, frame):
