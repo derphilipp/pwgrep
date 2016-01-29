@@ -1,17 +1,20 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-IGNORE_CASE = u'Ignore case distinctions, so that characters that differ only' \
-    u' in case match each other. Although this is straightforward when ' \
-    u'letters differ in case only via lowercase-uppercase pairs, the behavior' \
-    u' is unspecified in other situations.  For example, uppercase “S” has an '\
+IGNORE_CASE = u'Ignore case distinctions, so that characters that differ ' \
+    u'only in case match each other. Although this is straightforward when ' \
+    u'letters differ in case only via lowercase-uppercase pairs, the ' \
+    u'behavior is unspecified in other situations.  For example, '\
+    u'uppercase “S” has an '\
     u'unusual lowercase counterpart “ſ” (Unicode character U+017F, '\
     u'LATIN SMALL LETTER LONG S) in many locales, and it isunspecified ' \
     u'whether this unusual character matches “S” or “s” even though ' \
-    u'uppercasing it yields “S”. Another example: the lowercase German letter' \
+    u'uppercasing it yields “S”. Another example: '\
+    u'the lowercase German letter' \
     u' “ß” (U+00DF, LATIN SMALL LETTER SHARP S) is normally capitalized as ' \
-    u'the two-character string “SS” but it does not match “SS”, and it might ' \
-    u'not match the uppercase letter “ẞ” (U+1E9E, LATIN CAPITAL LETTER SHARP ' \
+    u'the two-character string “SS” but it does not match “SS”, ' \
+    u'and it might not match the uppercase letter ' \
+    u'“ẞ” (U+1E9E, LATIN CAPITAL LETTER SHARP ' \
     u'S) even though lowercasing the latter yields the former. ‘-y’ is an ' \
     u'obsolete synonym that is provided for compatibility.' \
     u'("-i" is specified by POSIX.)'
@@ -19,8 +22,8 @@ IGNORE_CASE = u'Ignore case distinctions, so that characters that differ only' \
 DEREFERENCE_RECURSIVE = u'For each directory operand, read and process all ' \
     u'files in that directory, recursively, following all symbolic links.'
 
-RECURSIVE = u'For each directory operand, read and process all files in that ' \
-            u'directory, recursively. ' \
+RECURSIVE = u'For each directory operand, read and process all files in ' \
+            u'that directory, recursively. ' \
             u'Follow symbolic links on the command line, but skip symlinks ' \
             u'that are encountered recursively.'\
             u'Note that if no file operand is given, grep searches the ' \
