@@ -2,7 +2,9 @@
 # -*- coding: utf-8 -*-
 import argparse
 import os
+import re
 import sys
+import sre_constants
 
 from pwgrep import command_parser_text
 from pwgrep import version
@@ -54,7 +56,8 @@ class CommandParser(object):
 
         self._parser.add_argument(
             'PATTERN',
-            metavar='PATTERN', type=str, nargs=1,
+            metavar='PATTERN', nargs=1,
+            type=self.validate_regex,
             help=command_parser_text.PATTERN
         )
         self._parser.add_argument(
@@ -78,6 +81,16 @@ class CommandParser(object):
             raise argparse.ArgumentTypeError("{} is not a valid color "
                                              "option".format(value))
         return value
+
+    @staticmethod
+    def validate_regex(regex):
+        try:
+            re.compile(regex)
+        except sre_constants.error as e:
+            raise argparse.ArgumentTypeError("{} is an invalid "
+                                             "regular expression: '{}'"
+                                             .format(regex, e.args[0]))
+        return regex
 
     @property
     def color(self):

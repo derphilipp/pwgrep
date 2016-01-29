@@ -185,6 +185,31 @@ pwgrep: error: argument -r/--recursive: not allowed with argument -R/--dereferen
     helper_test_match(SIMPLEDIR, '-R -r Hello .', '', expected_stderr, 2)
 
 
+@pytest.mark.skipif(sys.version_info >= (3, 5),
+                    reason="Before Python 3.4, exception does not "
+                           "print out position")
+def test_regex_wrong_regex_1_py2():
+    expected_stderr = """usage: pwgrep [-R | -r] [-h] [-i] [-v] [-o] [--color [COLOR]] [--version]
+              [--help]
+              PATTERN [PATH [PATH ...]]
+pwgrep: error: argument PATTERN: * is an invalid regular expression: 'nothing to repeat'
+"""
+    helper_test_match(SIMPLEDIR, '\* Hello',
+                      '', expected_stderr, 2)
+
+
+@pytest.mark.skipif(sys.version_info < (3, 5),
+                    reason="From Python 3 on, exception does not "
+                           "print out position")
+def test_regex_wrong_regex_1_py3():
+    expected_stderr = """usage: pwgrep [-R | -r] [-h] [-i] [-v] [-o] [--color [COLOR]] [--version]
+              [--help]
+              PATTERN [PATH [PATH ...]]
+pwgrep: error: argument PATTERN: * is an invalid regular expression: 'nothing to repeat at position 0'
+"""
+    helper_test_match(SIMPLEDIR, '\* Hello',
+                      '', expected_stderr, 2)
+
 # stdin
 def test_stdin_l():
     stdin = b"""Hello
