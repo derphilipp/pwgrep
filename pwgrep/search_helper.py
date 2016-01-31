@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import os
-import sys
 
 from pwgrep import file_helper
 from pwgrep import printer_helper
@@ -94,17 +93,3 @@ def search_in_file(filename, regexes, invert_match, no_filename,
                                        False, color)
             yield filename, line
             # return match_occurred
-
-
-def search_in_stdin(regex, invert_match):
-    """
-    Search for regex in stdin.
-
-    :param regex:                regex to search with
-    :param invert_match:         if match should be inverted
-                                (i.e. non-matches shall match)
-    :return line_number, line: (yields) matched line number, matched line
-    """
-    for line_nr, line in enumerate(sys.stdin):
-        if invert_match != bool(regex.search(line)):
-            yield line_nr, line
