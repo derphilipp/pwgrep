@@ -5,7 +5,7 @@ import re
 import sys
 
 
-class Regexes(object):
+class RegexContainer(object):
     """ Container class to store textual and binary regex."""
 
     def __init__(self, regex_text, ignore_case):
@@ -35,7 +35,7 @@ class CommandLineParserResult(object):
         :return:
         """
         self.options = options
-        self.regexes = Regexes(
+        self.regexes = RegexContainer(
             self.options.PATTERN[0],
             self.options.ignore_case
         )

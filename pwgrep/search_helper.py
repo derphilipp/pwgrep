@@ -8,7 +8,7 @@ from pwgrep import file_helper
 from pwgrep import printer_helper
 
 
-def lines_from_file(filename):
+def lines_in_file(filename):
     """
     Try to read each line for a given file. Print Error messages on IOErrors.
 
@@ -20,7 +20,7 @@ def lines_from_file(filename):
             yield line_nr, line
 
 
-def search_in_text_file(filename, regex, invert_match):
+def results_in_text_file(filename, regex, invert_match):
     """
     Search for regex in a textual file.
 
@@ -30,12 +30,12 @@ def search_in_text_file(filename, regex, invert_match):
     match)
     :return int, string: matched line number, matched line
     """
-    for line_nr, line in lines_from_file(filename):
+    for line_nr, line in lines_in_file(filename):
         if invert_match != bool(regex.search(line)):
             yield line_nr, line
 
 
-def search_in_binary_file(filename, regex, invert_match):
+def results_in_binary_file(filename, regex, invert_match):
     """
     Search for regex in a binary file.
 
@@ -79,14 +79,14 @@ def search_in_file(filename, regexes, invert_match, no_filename,
 
     match_occurred = False
     if file_helper.file_is_binary(filename):
-        if search_in_binary_file(filename, regexes.regex_bin, invert_match):
+        if results_in_binary_file(filename, regexes.regex_bin, invert_match):
             match_occurred = True
             printer_helper.print_match(filename, None, None, no_filename,
                                        True, color)
     else:
-        for _, line in search_in_text_file(filename,
-                                           regexes.regex_txt,
-                                           invert_match):
+        for _, line in results_in_text_file(filename,
+                                            regexes.regex_txt,
+                                            invert_match):
             match_occurred = True
             printer_helper.print_match(filename, line, regexes.regex_txt,
                                        no_filename,
