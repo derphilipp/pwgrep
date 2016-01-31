@@ -3,61 +3,77 @@ from pwgrep import printer_helper
 from pwgrep import search_helper
 
 
-def grep_stdin(regexes, invert_match=False, color=False):
-    """
-    Process grep operation on stdin.
+class ResultType(object):
+    """ Definition of Match Types"""
 
-    :param regexes: Regexes used for matching text
-    :param invert_match: If match result shall be inversed
-    :param color: If output shall be colored
-    :return: If any match occurred
-    """
-    match_occurred = False
-    for _, line in search_helper.search_in_stdin(
-        regexes.regex_txt, invert_match
-    ):
-        match_occurred = True
-        printer_helper.print_match('', line, regexes.regex_txt,
-                                   True, False, color)
-    return match_occurred
+    TEXT_MATCH = 1
+    BINARY_MATCH = 2
+    DIRECTORY = 3
 
 
-def grep_files_from_commandline(files, regexes,
-                                invert_match=False,
-                                color=False,
-                                recursive=False, dereference_recursive=False,
-                                no_filename=False):
-    """
-    Process grep operation on files specified via commandline.
+def GrepPrinter(object):
+    def __init__(self, commandline_parser_results):
+        self.commandline_parser_results = commandline_parser_results
 
-    :param files: Files to be processed
-    :param regexes: Regex container, containing binary and textual regex
-    :param invert_match: If match result shall be inversed
-    :param color: If output shall be colored
-    :param recursive: If recursion shall be used on directories
-    :param dereference_recursive: If recursion shall be used on directories,
-    following symlinks
-    :param no_filename: If printing of filename shall be suppressed
-    :return: If any match occurred
-    """
-    match_occurred = False
-    for file_name in files:
-        if file_helper.file_is_directory(file_name):
-            if not (dereference_recursive or recursive):
-                printer_helper.print_is_directory(file_name)
+
+class Grepper(object):
+    def __init__(self, commandline_parser_results):
+        self.commandline_parser_results = commandline_parser_results
+        self.options = self.commandline_parser_results.options
+
+        self.match_occurred = False
+
+    def grep_stdin(self):
+        """
+        Process grep operation on stdin.
+
+        :return: If any match occurred
+        """
+        for _, line in search_helper.search_in_stdin(
+            self.commandline_parser_results.regexes.regex_txt,
+            self.commandline_parser_results.options.invert_match
+        ):
+            yield line
+            printer_helper.print_match('', line,
+                                       self.commandline_parser_results.
+                                       regexes.regex_txt,
+                                       True, False,
+                                       self.commandline_parser_results.color
+                                       )
+
+    def grep_files_from_commandline(self):
+        """
+        Process grep operation on files specified via commandline.
+
+        following symlinks
+        :return: If any match occurred
+        """
+        for file_name in self.commandline_parser_results.options.PATH:
+            if file_helper.file_is_directory(file_name):
+                if not (self.options.dereference_recursive or
+                        self.options.recursive):
+                    printer_helper.print_is_directory(file_name)
+                else:
+                    for filename in file_helper.files_from_directory_recursive(
+                        file_name,
+                        self.options.dereference_recursive
+                    ):
+                        for match in search_helper.search_in_file(
+                            filename,
+                            self.commandline_parser_results.regexes,
+                            self.commandline_parser_results.
+                            options.invert_match,
+                            self.commandline_parser_results.
+                            options.no_filename,
+                            self.commandline_parser_results.color
+                        ):
+                            yield match
             else:
-                for filename in file_helper.files_from_directory_recursive(
+                for match in search_helper.search_in_file(
                     file_name,
-                    dereference_recursive
+                    self.commandline_parser_results.regexes,
+                    self.commandline_parser_results.options.invert_match,
+                    self.commandline_parser_results.options.no_filename,
+                    self.commandline_parser_results.color
                 ):
-
-                    if search_helper.search_in_file(filename, regexes,
-                                                    invert_match,
-                                                    no_filename, color):
-                        match_occurred = True
-        else:
-            if search_helper.search_in_file(file_name, regexes,
-                                            invert_match,
-                                            no_filename, color):
-                match_occurred = True
-    return match_occurred
+                    yield match

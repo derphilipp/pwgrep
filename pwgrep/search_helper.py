@@ -75,23 +75,25 @@ def search_in_file(filename, regexes, invert_match, no_filename,
     :return:
     """
     if not file_exists_and_readable(filename):
-        return False
+        return
 
-    match_occurred = False
+    # match_occurred = False
     if file_helper.file_is_binary(filename):
         if results_in_binary_file(filename, regexes.regex_bin, invert_match):
-            match_occurred = True
+            # match_occurred = True
             printer_helper.print_match(filename, None, None, no_filename,
                                        True, color)
+            yield filename
     else:
         for _, line in results_in_text_file(filename,
                                             regexes.regex_txt,
                                             invert_match):
-            match_occurred = True
+            # match_occurred = True
             printer_helper.print_match(filename, line, regexes.regex_txt,
                                        no_filename,
                                        False, color)
-    return match_occurred
+            yield filename, line
+            # return match_occurred
 
 
 def search_in_stdin(regex, invert_match):

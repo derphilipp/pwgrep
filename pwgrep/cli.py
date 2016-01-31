@@ -16,20 +16,16 @@ def run(args):
     :return: if any match was found in file
     """
     parser_result = commandline_parser.CommandLineParser().parse(args)
+    grepper = process.Grepper(parser_result)
 
+    any_match = False
     if not parser_result.options.PATH:
-        return process.grep_stdin(parser_result.regexes,
-                                  parser_result.options.invert_match,
-                                  parser_result.color)
+        for match in grepper.grep_stdin():
+            any_match = True
     else:
-        return process.grep_files_from_commandline(
-            parser_result.options.PATH,
-            parser_result.regexes,
-            parser_result.options.invert_match,
-            parser_result.color,
-            parser_result.options.recursive,
-            parser_result.options.dereference_recursive,
-            parser_result.options.no_filename)
+        for match in grepper.grep_files_from_commandline():
+            any_match = True
+    return any_match
 
 
 def signal_terminal_handler(signal_nr, _):
