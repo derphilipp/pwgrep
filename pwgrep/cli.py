@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import re
 import signal
 import sys
 
@@ -18,22 +17,14 @@ def run(args):
     """
     parser_result = commandline_parser.CommandLineParser().parse(args)
 
-    regex_flags = 0
-    if parser_result.options.ignore_case:
-        regex_flags |= re.IGNORECASE
-    regex_txt = re.compile(parser_result.options.PATTERN[0], regex_flags)
-    regex_bin = re.compile(str.encode(parser_result.options.PATTERN[0]),
-                           regex_flags)
-
     if not parser_result.options.PATH:
-        return process.grep_stdin(regex_txt,
+        return process.grep_stdin(parser_result.regexes,
                                   parser_result.options.invert_match,
                                   parser_result.color)
     else:
         return process.grep_files_from_commandline(
             parser_result.options.PATH,
-            regex_txt,
-            regex_bin,
+            parser_result.regexes,
             parser_result.options.invert_match,
             parser_result.color,
             parser_result.options.recursive,
@@ -53,6 +44,12 @@ def signal_terminal_handler(signal_nr, _):
 
 
 def main(args=sys.argv[1:]):
+    """
+    Main loop of program; Processes args; quits towards system with exit code.
+
+    :param args: Command line parameters
+    :return:
+    """
     signal.signal(signal.SIGTERM, signal_terminal_handler)
 
     try:

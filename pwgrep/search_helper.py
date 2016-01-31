@@ -62,14 +62,13 @@ def file_exists_and_readable(filename):
     return True
 
 
-def search_in_file(filename, regex_txt, regex_bin, invert_match, no_filename,
+def search_in_file(filename, regexes, invert_match, no_filename,
                    color):
     """
     Search and print matches of a given file.
 
     :param filename: filename to be searched in
-    :param regex_txt: Regex used for matching text
-    :param regex_bin: Regex used for matching binary
+    :param regexes: Regexes for binary and textual regex
     :param invert_match: if matches shall be inverted
     :param no_filename: if printing of filename shall be suppressed
     :param color: if output shall be colorized
@@ -80,14 +79,17 @@ def search_in_file(filename, regex_txt, regex_bin, invert_match, no_filename,
 
     match_occurred = False
     if file_helper.file_is_binary(filename):
-        if search_in_binary_file(filename, regex_bin, invert_match):
+        if search_in_binary_file(filename, regexes.regex_bin, invert_match):
             match_occurred = True
             printer_helper.print_match(filename, None, None, no_filename,
                                        True, color)
     else:
-        for _, line in search_in_text_file(filename, regex_txt, invert_match):
+        for _, line in search_in_text_file(filename,
+                                           regexes.regex_txt,
+                                           invert_match):
             match_occurred = True
-            printer_helper.print_match(filename, line, regex_txt, no_filename,
+            printer_helper.print_match(filename, line, regexes.regex_txt,
+                                       no_filename,
                                        False, color)
     return match_occurred
 

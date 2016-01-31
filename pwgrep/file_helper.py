@@ -16,7 +16,7 @@ def file_is_directory(filename):
     return os.path.isdir(filename)
 
 
-def get_all_files_from_directory(directory, deference_recursive=False):
+def files_from_directory_recursive(directory, deference_recursive=False):
     files = file_walker.symlink_walker(directory,
                                        deference_recursive=deference_recursive)
     for file_name in files:

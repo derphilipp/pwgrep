@@ -83,6 +83,12 @@ class CommandLineParser(object):
 
     @staticmethod
     def _evaluate_regex(regex):
+        """
+        Evaluate if given regex is valid
+
+        :param regex:
+        :return: Value of regex
+        """
         try:
             re.compile(regex)
         except sre_constants.error as e:
@@ -92,4 +98,10 @@ class CommandLineParser(object):
         return regex
 
     def parse(self, args):
+        """
+        Parse provided input arguments.
+
+        :param args: Command line arguments / input strings for parser
+        :return: CommandLineParameterResult containing resulting options
+        """
         return CommandLineParserResult(self._parser.parse_args(args))
