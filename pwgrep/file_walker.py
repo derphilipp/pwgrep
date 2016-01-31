@@ -11,7 +11,7 @@ WalkedDir = collections.namedtuple("WalkedDir", "path subdirs files depth")
 
 def symlink_walker(directory, deference_recursive=False, onerror=None):
     """
-    Wrapper around os.walk that recognizes symlink loops
+    Wrapper around os.walk that recognizes symlink loops.
 
     Heavily inspired by Nick Coghlans walking algorithm
     https://code.activestate.com/recipes/577913-selective-directory-walking/

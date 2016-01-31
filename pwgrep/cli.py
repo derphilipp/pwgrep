@@ -5,45 +5,48 @@ import re
 import signal
 import sys
 
-from pwgrep import command_parser
+from pwgrep import commandline_parser
 from pwgrep import process
 
 
 def run(args):
     """
-    Processes input  and performs grep operations
+    Process input  and performs grep operations.
+
     :param args: command line parameters (except [0], i.e. program name)
     :return: if any match was found in file
     """
-    parser = command_parser.CommandParser(args)
+    parser_result = commandline_parser.CommandLineParser().parse(args)
 
     regex_flags = 0
-    if parser.options.ignore_case:
+    if parser_result.options.ignore_case:
         regex_flags |= re.IGNORECASE
-    regex_txt = re.compile(parser.options.PATTERN[0], regex_flags)
-    regex_bin = re.compile(str.encode(parser.options.PATTERN[0]),
+    regex_txt = re.compile(parser_result.options.PATTERN[0], regex_flags)
+    regex_bin = re.compile(str.encode(parser_result.options.PATTERN[0]),
                            regex_flags)
 
-    if not parser.options.PATH:
-        return process.process_stdin(regex_txt, parser.options.invert_match,
-                                     parser.color)
+    if not parser_result.options.PATH:
+        return process.grep_stdin(regex_txt,
+                                  parser_result.options.invert_match,
+                                  parser_result.color)
     else:
-        return process.process_commandline(
-            parser.options.PATH,
+        return process.grep_files_from_commandline(
+            parser_result.options.PATH,
             regex_txt,
             regex_bin,
-            parser.options.invert_match,
-            parser.color,
-            parser.options.recursive,
-            parser.options.dereference_recursive,
-            parser.options.no_filename)
+            parser_result.options.invert_match,
+            parser_result.color,
+            parser_result.options.recursive,
+            parser_result.options.dereference_recursive,
+            parser_result.options.no_filename)
 
 
-def signal_terminal_handler(signal_nr, frame):
+def signal_terminal_handler(signal_nr, _):
     """
-    Handler for signals; Quits program with correct exit code
+    Handler for signals; Quits program with correct exit code.
+
     :param signal_nr: signal nr of received signal
-    :param frame: -
+    :param _: frame, unused
     :return:
     """
     sys.exit(128 + signal_nr)

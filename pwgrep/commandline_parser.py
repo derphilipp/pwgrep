@@ -1,17 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import argparse
-import os
 import re
-import sys
 import sre_constants
 
-from pwgrep import command_parser_text
+import argparse
+
+from pwgrep import commandline_parser_text
 from pwgrep import version
+from pwgrep.commandline_parser_result import CommandLineParserResult
 
 
-class CommandParser(object):
-    def __init__(self, args):
+class CommandLineParser(object):
+    def __init__(self):
         self._parser = argparse.ArgumentParser(prog='pwgrep', add_help=False)
 
         recursion_group = self._parser.add_mutually_exclusive_group()
@@ -19,51 +19,51 @@ class CommandParser(object):
         recursion_group.add_argument(
             '-R', '--dereference-recursive',
             action='store_true',
-            help=command_parser_text.DEREFERENCE_RECURSIVE
+            help=commandline_parser_text.DEREFERENCE_RECURSIVE
         )
         recursion_group.add_argument(
             '-r', '--recursive',
             action='store_true',
-            help=command_parser_text.RECURSIVE)
+            help=commandline_parser_text.RECURSIVE)
 
         self._parser.add_argument(
             '-h', '--no-filename',
             action='store_true',
-            help=command_parser_text.NO_FILENAME
+            help=commandline_parser_text.NO_FILENAME
         )
         self._parser.add_argument(
             '-i', '-y', '--ignore-case',
             action='store_true',
-            help=command_parser_text.IGNORE_CASE
+            help=commandline_parser_text.IGNORE_CASE
         )
         self._parser.add_argument(
             '-v', '--invert-match',
             action='store_true',
-            help=command_parser_text.INVERT_MATCH
+            help=commandline_parser_text.INVERT_MATCH
         )
 
         self._parser.add_argument(
             '-o', '--only-matching',
             action='store_true',
-            help=command_parser_text.ONLY_MATCHING
+            help=commandline_parser_text.ONLY_MATCHING
         )
 
         self._parser.add_argument(
             '--color', nargs='?', default='never',
-            type=self.validate_color,
-            help=command_parser_text.COLOR
+            type=self._evaluate_color,
+            help=commandline_parser_text.COLOR
         )
 
         self._parser.add_argument(
             'PATTERN',
             metavar='PATTERN', nargs=1,
-            type=self.validate_regex,
-            help=command_parser_text.PATTERN
+            type=self._evaluate_regex,
+            help=commandline_parser_text.PATTERN
         )
         self._parser.add_argument(
             'PATH',
             metavar='PATH', type=str, nargs='*',
-            help=command_parser_text.PATH
+            help=commandline_parser_text.PATH
         )
         self._parser.add_argument(
             '--version',
@@ -71,19 +71,18 @@ class CommandParser(object):
         )
         self._parser.add_argument(
             '--help',
-            action='help', help=command_parser_text.HELP
+            action='help', help=commandline_parser_text.HELP
         )
-        self.options = self._parser.parse_args(args)
 
     @staticmethod
-    def validate_color(value):
+    def _evaluate_color(value):
         if value not in ['always', 'never', 'auto']:
             raise argparse.ArgumentTypeError("{} is not a valid color "
                                              "option".format(value))
         return value
 
     @staticmethod
-    def validate_regex(regex):
+    def _evaluate_regex(regex):
         try:
             re.compile(regex)
         except sre_constants.error as e:
@@ -92,11 +91,5 @@ class CommandParser(object):
                                              .format(regex, e.args[0]))
         return regex
 
-    @property
-    def color(self):
-        if self.options.color is None or self.options.color == 'never':
-            return False
-        if self.options.color == 'always':
-            return True
-        # can only be 'auto' at this point
-        return os.isatty(sys.stdout.fileno())
+    def parse(self, args):
+        return CommandLineParserResult(self._parser.parse_args(args))

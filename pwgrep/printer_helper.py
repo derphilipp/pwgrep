@@ -9,7 +9,8 @@ from pwgrep import colors
 
 def colorize_match(match):
     """
-    Colorizes matches in a line
+    Colorize matches in a line.
+
     :param match: regex match to be marked
     :return: colorized line
     """
@@ -19,7 +20,8 @@ def colorize_match(match):
 
 def colorize_filename(file_name):
     """
-    Colorizes filename
+    Colorize filename.
+
     :param file_name: filename to be colorized
     :return string: colorized filename
     """
@@ -29,7 +31,8 @@ def colorize_filename(file_name):
 
 def format_printline(file_name, line, regex, color):
     """
-    Colorizes a given string as a 'match'
+    Colorize a given string as a 'match'.
+
     :param file_name: filename with match
     :param line: matched line
     :param regex: regular expression used for search/colorization
@@ -45,7 +48,8 @@ def format_printline(file_name, line, regex, color):
 
 def print_binary_match(file_name):
     """
-    Prints info for a match in a binary file
+    Print info for a match in a binary file.
+
     :param file_name: filename to be printed
     :return:
     """
@@ -54,7 +58,8 @@ def print_binary_match(file_name):
 
 def print_text_match(file_name, line, regex, color, no_filename):
     """
-    Prints info for a match in a textual file
+    Print info for a match in a textual file.
+
     :param file_name: filename to be printed
     :param line: (matched) line to be printed
     :param regex: regex to be printed/marked
@@ -70,7 +75,8 @@ def print_text_match(file_name, line, regex, color, no_filename):
 
 def print_loop_warning(file_name):
     """
-    Prints warning for a recursive directory loop
+    Print warning for a recursive directory loop.
+
     :param file_name: filename to be printed
     :return:
     """
@@ -80,7 +86,8 @@ def print_loop_warning(file_name):
 
 def print_is_directory(dir_name):
     """
-    Prints warning for trying to search a directory without recursion
+    Print warning for trying to search a directory without recursion.
+
     :param dir_name: directoryname to be printed
     :return:
     """
@@ -90,7 +97,8 @@ def print_is_directory(dir_name):
 def print_match(filename, line, regex, no_filename=False,
                 file_is_binary=False, color=False):
     """
-    Prints matches from files
+    Print matches from files.
+
     :param filename: filename of match
     :param line: complete line of match
     :param regex: regular expression used

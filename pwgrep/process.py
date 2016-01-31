@@ -3,9 +3,10 @@ from pwgrep import printer_helper
 from pwgrep import search_helper
 
 
-def process_stdin(regex, invert_match=False, color=False):
+def grep_stdin(regex, invert_match=False, color=False):
     """
-    Processes grep operation on stdin
+    Process grep operation on stdin.
+
     :param regex: Regex used for matching text
     :param invert_match: If match result shall be inversed
     :param color: If output shall be colored
@@ -18,12 +19,14 @@ def process_stdin(regex, invert_match=False, color=False):
     return match_occurred
 
 
-def process_commandline(files, regex_txt, regex_bin, invert_match=False,
-                        color=False,
-                        recursive=False, dereference_recursive=False,
-                        no_filename=False):
+def grep_files_from_commandline(files, regex_txt, regex_bin,
+                                invert_match=False,
+                                color=False,
+                                recursive=False, dereference_recursive=False,
+                                no_filename=False):
     """
-    Processes grep operation on stdin
+    Process grep operation on files specified via commandline.
+
     :param files: Files to be processed
     :param regex_txt: Regex used for matching text
     :param regex_bin: Regex used for matching binary
@@ -41,8 +44,10 @@ def process_commandline(files, regex_txt, regex_bin, invert_match=False,
             if not (dereference_recursive or recursive):
                 printer_helper.print_is_directory(file_name)
             else:
-                for filename in file_helper.recurse(file_name,
-                                                    dereference_recursive):
+                for filename in file_helper.get_all_files_from_directory(
+                    file_name,
+                    dereference_recursive
+                ):
 
                     if search_helper.search_in_file(filename, regex_txt,
                                                     regex_bin,

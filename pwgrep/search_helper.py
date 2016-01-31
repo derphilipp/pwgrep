@@ -10,24 +10,20 @@ from pwgrep import printer_helper
 
 def lines_from_file(filename):
     """
-    Tries to read each line for a given file. Prints Error messages on IOErrors
+    Try to read each line for a given file. Print Error messages on IOErrors.
+
     :param filename: filename to be read
     :return line_number, line: (yields) line number, line of file to be read
     """
-    try:
-        with open(filename, 'rU') as file_object:
-            for line_nr, line in enumerate(file_object):
-                yield line_nr, line
-    except IOError:
-        if os.path.exists(filename):
-            print ('pwgrep: {}: Permission denied'.format(filename))
-        else:
-            print ('pwgrep: {}: No such file or directory'.format(filename))
+    with open(filename, 'rU') as file_object:
+        for line_nr, line in enumerate(file_object):
+            yield line_nr, line
 
 
 def search_in_text_file(filename, regex, invert_match):
     """
-    Searches for regex in a textual file
+    Search for regex in a textual file.
+
     :param filename : file to be searched in
     :param regex: regex to search with
     :param invert_match: if match should be inverted (i.e. non-matches shall
@@ -41,30 +37,36 @@ def search_in_text_file(filename, regex, invert_match):
 
 def search_in_binary_file(filename, regex, invert_match):
     """
-    Searches for regex in a binary file
+    Search for regex in a binary file.
+
     :param filename: file to be searched in
     :param regex: regex to search with
     :param invert_match: if match should be inverted
                          (i.e. non-matches shall match)
     :return match_was_found: if a match was found
     """
-    try:
-        with open(filename, 'rb+') as file_object:
-            for _, line in enumerate(file_object):
-                if invert_match != bool(regex.search(line)):
-                    return True
-            return False
-    except IOError:
-        if os.path.exists(filename):
-            print ('pwgrep: {}: Permission denied'.format(filename))
-        else:
-            print ('pwgrep: {}: No such file or directory'.format(filename))
+    with open(filename, 'rb+') as file_object:
+        for _, line in enumerate(file_object):
+            if invert_match != bool(regex.search(line)):
+                return True
+        return False
+
+
+def file_exists_and_readable(filename):
+    if not os.path.exists(filename):
+        print ('pwgrep: {}: No such file or directory'.format(filename))
+        return False
+    if not os.access(filename, os.R_OK):
+        print('pwgrep: {}: Permission denied'.format(filename))
+        return False
+    return True
 
 
 def search_in_file(filename, regex_txt, regex_bin, invert_match, no_filename,
                    color):
     """
-    Searches and prints matches of a given file
+    Search and print matches of a given file.
+
     :param filename: filename to be searched in
     :param regex_txt: Regex used for matching text
     :param regex_bin: Regex used for matching binary
@@ -73,6 +75,9 @@ def search_in_file(filename, regex_txt, regex_bin, invert_match, no_filename,
     :param color: if output shall be colorized
     :return:
     """
+    if not file_exists_and_readable(filename):
+        return False
+
     match_occurred = False
     if file_helper.file_is_binary(filename):
         if search_in_binary_file(filename, regex_bin, invert_match):
@@ -89,7 +94,8 @@ def search_in_file(filename, regex_txt, regex_bin, invert_match, no_filename,
 
 def search_in_stdin(regex, invert_match):
     """
-    Searches for regex in stdin
+    Search for regex in stdin.
+
     :param regex:                regex to search with
     :param invert_match:         if match should be inverted
                                 (i.e. non-matches shall match)
