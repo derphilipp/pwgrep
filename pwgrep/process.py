@@ -5,6 +5,13 @@ from pwgrep import search_helper
 import sys
 
 
+class SearchResult(object):
+    def __init__(self, line_number, line, filename=None):
+        self.line_number = line_number
+        self.line = line
+        self.filename = filename
+
+
 class SearchFile(object):
     pass
 
@@ -24,7 +31,7 @@ class SearchStdin(object):
     def __iter__(self):
         for line_nr, line in enumerate(sys.stdin):
             if self.invert_match != bool(self.regexes.regex_txt.search(line)):
-                yield line_nr, line
+                yield SearchResult(line_nr, line)
 
 
 class Grepper(object):
@@ -45,14 +52,14 @@ class Grepper(object):
             self.commandline_parser_results.regexes,
             self.commandline_parser_results.options.invert_match)
 
-        for _, line in searcher:
-            printer_helper.print_match('', line,
+        for result in searcher:
+            printer_helper.print_match('', result.line,
                                        self.commandline_parser_results.
                                        regexes.regex_txt,
                                        True, False,
                                        self.commandline_parser_results.color
                                        )
-            yield line
+            yield result
 
     def grep_files_from_commandline(self):
         """
