@@ -10,6 +10,17 @@ class SearchFile(object):
     pass
 
 
+class RegexSearcher(object):
+    def __init__(self, regex):
+        self.regex_txt= re.compile(regex)
+
+    def search_line_txt(self, line):
+        result = []
+        for m in self.regex_txt.finditer(line):
+            result.append([m.start(), m.end()])
+        return result
+
+
 class SearchStdin(object):
     def __init__(self, regexes, invert_match=False):
         """
