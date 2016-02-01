@@ -4,6 +4,7 @@ from pwgrep import search_helper
 from pwgrep import search_result
 
 import sys
+import re
 
 
 class SearchFile(object):
@@ -12,7 +13,7 @@ class SearchFile(object):
 
 class RegexSearcher(object):
     def __init__(self, regex):
-        self.regex_txt= re.compile(regex)
+        self.regex_txt = re.compile(regex)
 
     def search_line_txt(self, line):
         result = []
@@ -36,7 +37,8 @@ class SearchStdin(object):
     def __iter__(self):
         for line_nr, line in enumerate(sys.stdin):
             if self.invert_match != bool(self.regexes.regex_txt.search(line)):
-                yield search_result.SearchResult(line_number=line_nr, match_text=line)
+                yield search_result.SearchResult(line_number=line_nr,
+                                                 match_text=line)
 
 
 class Grepper(object):

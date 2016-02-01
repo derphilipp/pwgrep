@@ -1,10 +1,10 @@
 class SearchResult(object):
-    def __init__(self, 
+    def __init__(self,
                  line_number=None,
-                 before_match_text = None,
-                 match_text=None, 
-                 after_match_text = None,
-                 filename = None
+                 before_match_text=None,
+                 match_text=None,
+                 after_match_text=None,
+                 filename=None
                  ):
 
         self.line_number = line_number
@@ -12,4 +12,3 @@ class SearchResult(object):
         self.match_text = match_text
         self.after_match_text = after_match_text
         self.filename = filename
-

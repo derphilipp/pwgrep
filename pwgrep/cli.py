@@ -18,7 +18,7 @@ def run(args):
     parser_result = commandline_parser.CommandLineParser().parse(args)
     grepper = process.Grepper(parser_result)
 
-    #printer = ResultPrinter(parser_result)
+    # printer = ResultPrinter(parser_result)
 
     any_match = False
     if not parser_result.options.PATH:

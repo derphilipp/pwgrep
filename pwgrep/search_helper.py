@@ -86,8 +86,8 @@ def search_in_file(filename, regexes, invert_match, no_filename,
             yield filename
     else:
         for line_nr, line in results_in_text_file(filename,
-                                            regexes.regex_txt,
-                                            invert_match):
+                                                  regexes.regex_txt,
+                                                  invert_match):
             # match_occurred = True
             printer_helper.print_match(filename, line, regexes.regex_txt,
                                        no_filename,
