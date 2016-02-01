@@ -1,15 +1,9 @@
 from pwgrep import file_helper
 from pwgrep import printer_helper
 from pwgrep import search_helper
+from pwgrep import search_result
 
 import sys
-
-
-class SearchResult(object):
-    def __init__(self, line_number, line, filename=None):
-        self.line_number = line_number
-        self.line = line
-        self.filename = filename
 
 
 class SearchFile(object):
@@ -31,7 +25,7 @@ class SearchStdin(object):
     def __iter__(self):
         for line_nr, line in enumerate(sys.stdin):
             if self.invert_match != bool(self.regexes.regex_txt.search(line)):
-                yield SearchResult(line_nr, line)
+                yield search_result.SearchResult(line_nr, line)
 
 
 class Grepper(object):

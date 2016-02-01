@@ -5,6 +5,7 @@ import os
 
 from pwgrep import file_helper
 from pwgrep import printer_helper
+from pwgrep import search_result
 
 
 def lines_in_file(filename):
@@ -84,12 +85,12 @@ def search_in_file(filename, regexes, invert_match, no_filename,
                                        True, color)
             yield filename
     else:
-        for _, line in results_in_text_file(filename,
+        for line_nr, line in results_in_text_file(filename,
                                             regexes.regex_txt,
                                             invert_match):
             # match_occurred = True
             printer_helper.print_match(filename, line, regexes.regex_txt,
                                        no_filename,
                                        False, color)
-            yield filename, line
+            yield search_result.SearchResult(line_nr, line, filename)
             # return match_occurred
