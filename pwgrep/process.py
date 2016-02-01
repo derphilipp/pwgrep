@@ -25,7 +25,7 @@ class SearchStdin(object):
     def __iter__(self):
         for line_nr, line in enumerate(sys.stdin):
             if self.invert_match != bool(self.regexes.regex_txt.search(line)):
-                yield search_result.SearchResult(line_nr, line)
+                yield search_result.SearchResult(line_number=line_nr, match_text=line)
 
 
 class Grepper(object):
@@ -47,7 +47,7 @@ class Grepper(object):
             self.commandline_parser_results.options.invert_match)
 
         for result in searcher:
-            printer_helper.print_match('', result.line,
+            printer_helper.print_match('', result.match_text,
                                        self.commandline_parser_results.
                                        regexes.regex_txt,
                                        True, False,

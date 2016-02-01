@@ -92,5 +92,7 @@ def search_in_file(filename, regexes, invert_match, no_filename,
             printer_helper.print_match(filename, line, regexes.regex_txt,
                                        no_filename,
                                        False, color)
-            yield search_result.SearchResult(line_nr, line, filename)
+            yield search_result.SearchResult(line_number=line_nr,
+                                             match_text=line,
+                                             filename=filename)
             # return match_occurred
