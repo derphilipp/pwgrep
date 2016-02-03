@@ -2,10 +2,9 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function
-import sys
 
 from pwgrep.colors import ConsoleColors
-from pwgrep.search_result import TextSearchResult, BinarySearchResult, StdinSearchResult
+from pwgrep import search_result
 
 
 class ResultPrinter(object):
@@ -58,12 +57,11 @@ class ResultPrinter(object):
         self.print_any_match(search_result)
 
     def print_result(self, result):
-        if isinstance(result, TextSearchResult):
+        if isinstance(result, search_result.TextSearchResult):
             self.print_single_match(result)
-        elif isinstance(result, BinarySearchResult):
+        elif isinstance(result, search_result.BinarySearchResult):
             self.print_binary_match(result)
-        elif isinstance(result, StdinSearchResult):
+        elif isinstance(result, search_result.StdinSearchResult):
             self.print_stdin_match(result)
         else:
             assert False, "Invalid type to print: {}".format(type(result))
-
