@@ -4,10 +4,11 @@
 import os
 
 from pwgrep import file_helper
-from pwgrep import printer_helper
 from pwgrep import search_result
 
+
 class RegexSearcher(object):
+
     def __init__(self, regex):
         self.regex_txt = regex
 
@@ -44,7 +45,7 @@ def results_in_text_file(filename, regex, invert_match):
     """
     for line_nr, line in lines_in_file(filename):
         rs = RegexSearcher(regex)
-        result =rs.search_line_txt(line)
+        result = rs.search_line_txt(line)
         yield line_nr, line, result
 
 
@@ -67,7 +68,7 @@ def results_in_binary_file(filename, regex, invert_match):
 
 def file_exists_and_readable(filename):
     if not os.path.exists(filename):
-        print ('pwgrep: {}: No such file or directory'.format(filename))
+        print('pwgrep: {}: No such file or directory'.format(filename))
         return False
     if not os.access(filename, os.R_OK):
         print('pwgrep: {}: Permission denied'.format(filename))
@@ -94,19 +95,19 @@ def search_in_file(filename, regexes, invert_match, no_filename,
     if file_helper.file_is_binary(filename):
         if results_in_binary_file(filename, regexes.regex_bin, invert_match):
             # match_occurred = True
-            #printer_helper.print_match(filename, None, None, no_filename,
+            # printer_helper.print_match(filename, None, None, no_filename,
             #                           True, color)
-            #yield filename
+            # yield filename
             yield search_result.BinarySearchResult(filename=filename)
     else:
         for line_nr, line, result in results_in_text_file(filename,
-                                                  regexes.regex_txt,
-                                                  invert_match):
+                                                          regexes.regex_txt,
+                                                          invert_match):
             # match_occurred = True
-            #printer_helper.print_match(filename, line, regexes.regex_txt,
+            # printer_helper.print_match(filename, line, regexes.regex_txt,
             #                           no_filename,
             #                           False, color)
             yield search_result.TextSearchResult(line_number=line_nr,
-                                             line=line,
-                                             match=result,
-                                             filename=filename)
+                                                 line=line,
+                                                 match=result,
+                                                 filename=filename)

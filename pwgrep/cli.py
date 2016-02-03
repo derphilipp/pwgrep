@@ -7,7 +7,6 @@ import sys
 from pwgrep import commandline_parser
 from pwgrep import printer_helper
 from pwgrep import process
-from pwgrep import search_result
 
 
 def run(args):
@@ -20,10 +19,10 @@ def run(args):
     parser_result = commandline_parser.CommandLineParser().parse(args)
     grepper = process.Grepper(parser_result)
     printer = printer_helper.ResultPrinter(
-            colorize=parser_result.color,
-            print_filename=parser_result.print_filename,
-            invert_match=parser_result.options.invert_match
-            )
+        colorize=parser_result.color,
+        print_filename=parser_result.print_filename,
+        invert_match=parser_result.options.invert_match
+    )
 
     any_match = False
     if not parser_result.options.PATH:

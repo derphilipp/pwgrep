@@ -7,38 +7,41 @@ import sys
 from pwgrep import colors
 from pwgrep import search_result
 
+
 class ResultPrinter(object):
-    def __init__(self, colorize=False, print_filename=True, invert_match=False):
+
+    def __init__(
+        self,
+        colorize=False,
+        print_filename=True,
+            invert_match=False):
         self.colorize = colorize
-        self.print_filename=print_filename
+        self.print_filename = print_filename
         self.invert_match = invert_match
         if self.colorize:
-            self.COLOR_MATCH=colors.ConsoleColors.MATCH
-            self.COLOR_FILE=colors.ConsoleColors.FILE
-            self.COLOR_ENDC=colors.ConsoleColors.ENDC
+            self.COLOR_MATCH = colors.ConsoleColors.MATCH
+            self.COLOR_FILE = colors.ConsoleColors.FILE
+            self.COLOR_ENDC = colors.ConsoleColors.ENDC
         else:
-            self.COLOR_MATCH=""
-            self.COLOR_FILE=""
-            self.COLOR_ENDC=""
-
+            self.COLOR_MATCH = ""
+            self.COLOR_FILE = ""
+            self.COLOR_ENDC = ""
 
     def _print_filename(self, filename):
         if self.print_filename:
-            print ('{}{}{}:'.format(self.COLOR_FILE,
-                                    filename,
-                                    self.COLOR_ENDC),
-                                    end="")
+            print('{}{}{}:'.format(self.COLOR_FILE,
+                                   filename,
+                                   self.COLOR_ENDC), end="")
 
     def print_any_match(self, search_result):
-        pos=0
-        for fr,to in search_result.match:
+        pos = 0
+        for fr, to in search_result.match:
             if pos < to:
-                print(search_result.line[pos:fr],end="")
+                print(search_result.line[pos:fr], end="")
             print("{}{}{}".format(self.COLOR_MATCH, search_result.line[fr:to],
-                                  self.COLOR_ENDC),end="")
+                                  self.COLOR_ENDC), end="")
             pos = to
         print(search_result.line[pos:], end="")
-
 
     def print_single_match(self, search_result):
         if not search_result.match and self.invert_match:
@@ -48,33 +51,22 @@ class ResultPrinter(object):
             self._print_filename(search_result.filename)
             self.print_any_match(search_result)
 
-
     def print_binary_match(self, search_result):
         print('Binary file {} matches'.format(search_result.filename))
 
     def print_stdin_match(self, search_result):
         self.print_any_match(search_result)
 
-    def print_inverted_match(self, search_result):
-        if search_result.match is None:
-            self._print_filename(search_result)
-            print(search_result.line, end="")
-
-
     def print_result(self, result):
-        if type(result) is search_result.TextSearchResult:
+        if isinstance(result, search_result.TextSearchResult):
             self.print_single_match(result)
-        elif type(result) is search_result.BinarySearchResult:
+        elif isinstance(result, search_result.BinarySearchResult):
             self.print_binary_match(result)
-        elif type(result) is search_result.StdinSearchResult:
+        elif isinstance(result, search_result.StdinSearchResult):
             self.print_stdin_match(result)
         else:
             print(type(result))
             assert(False)
-
-
-
-
 
 
 def colorize_match(match):

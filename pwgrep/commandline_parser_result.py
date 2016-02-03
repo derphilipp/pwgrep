@@ -6,6 +6,7 @@ import sys
 
 
 class RegexContainer(object):
+
     """ Container class to store textual and binary regex."""
 
     def __init__(self, regex_text, ignore_case):
@@ -25,6 +26,7 @@ class RegexContainer(object):
 
 
 class CommandLineParserResult(object):
+
     """Result of Command Line Parser."""
 
     def __init__(self, options):
@@ -62,6 +64,6 @@ class CommandLineParserResult(object):
     def print_filename(self):
         if self.options.no_filename:
             return False
-        if len(self.options.PATH)==1 and not self.recursion_any:
+        if len(self.options.PATH) == 1 and not self.recursion_any:
             return False
         return True

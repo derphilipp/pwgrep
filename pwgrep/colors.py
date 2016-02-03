@@ -4,6 +4,7 @@
 
 
 class ConsoleColors(object):
+
     """ Definition of Console Colors"""
 
     BOLD = '\033[1m'

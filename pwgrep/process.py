@@ -4,10 +4,10 @@ from pwgrep import search_helper
 from pwgrep import search_result
 
 import sys
-import re
 
 
 class RegexSearcher(object):
+
     def __init__(self, regexes):
         self.regexes = regexes
 
@@ -19,6 +19,7 @@ class RegexSearcher(object):
 
 
 class SearchStdin(object):
+
     def __init__(self, regexes, invert_match=False):
         """
         Search for regex in stdin.
@@ -29,26 +30,19 @@ class SearchStdin(object):
         """
         self.regexes = regexes
         self.invert_match = invert_match
-        self.rs=RegexSearcher(self.regexes)
+        self.rs = RegexSearcher(self.regexes)
 
     def __iter__(self):
         for line_nr, line in enumerate(sys.stdin):
             match = self.rs.search_line_txt(line)
-            #if self.invert_match != bool(self.regexes.regex_txt.search(line)):
             if match:
-                yield search_result.StdinSearchResult(line_number=line_nr,
-                                                          match=match,
-                                                          line=line)
-                                                      #match=line)
-
-            #if self.invert_match != bool(self.regexes.regex_txt.search(line)):
-            #    yield search_result.StdinSearchResult(line_number=line_nr,
-            #                                          match=match,
-            #                                          line=line)
-            #                                          #match=line)
+                yield search_result.StdinSearchResult(
+                        line_number=line_nr,
+                        match=match, line=line)
 
 
 class Grepper(object):
+
     def __init__(self, commandline_parser_results):
         self.commandline_parser_results = commandline_parser_results
         self.options = self.commandline_parser_results.options
@@ -67,7 +61,7 @@ class Grepper(object):
             self.commandline_parser_results.options.invert_match)
 
         for result in searcher:
-            #printer_helper.print_match('', result.match,
+            # printer_helper.print_match('', result.match,
             #                           self.commandline_parser_results.
             #                           regexes.regex_txt,
             #                           True, False,
@@ -82,7 +76,7 @@ class Grepper(object):
         following symlinks
         :return: If any match occurred
         """
-        rs=RegexSearcher(self.commandline_parser_results.regexes)
+        # rs = RegexSearcher(self.commandline_parser_results.regexes)
 
         for file_name in self.commandline_parser_results.options.PATH:
             if file_helper.file_is_directory(file_name):

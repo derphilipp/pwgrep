@@ -11,6 +11,7 @@ from pwgrep.commandline_parser_result import CommandLineParserResult
 
 
 class CommandLineParser(object):
+
     def __init__(self):
         self._parser = argparse.ArgumentParser(prog='pwgrep', add_help=False)
 
