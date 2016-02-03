@@ -7,6 +7,18 @@ from pwgrep import file_helper
 from pwgrep import printer_helper
 from pwgrep import search_result
 
+class RegexSearcher(object):
+    def __init__(self, regex):
+        self.regex_txt = regex
+
+    def search_line_txt(self, line):
+        result = []
+        for m in self.regex_txt.finditer(line):
+            result.append([m.start(), m.end()])
+        if len(result) == 0:
+            return None
+        return result
+
 
 def lines_in_file(filename):
     """
@@ -31,8 +43,9 @@ def results_in_text_file(filename, regex, invert_match):
     :return int, string: matched line number, matched line
     """
     for line_nr, line in lines_in_file(filename):
-        if invert_match != bool(regex.search(line)):
-            yield line_nr, line
+        rs = RegexSearcher(regex)
+        result =rs.search_line_txt(line)
+        yield line_nr, line, result
 
 
 def results_in_binary_file(filename, regex, invert_match):
@@ -81,18 +94,19 @@ def search_in_file(filename, regexes, invert_match, no_filename,
     if file_helper.file_is_binary(filename):
         if results_in_binary_file(filename, regexes.regex_bin, invert_match):
             # match_occurred = True
-            printer_helper.print_match(filename, None, None, no_filename,
-                                       True, color)
-            yield filename
+            #printer_helper.print_match(filename, None, None, no_filename,
+            #                           True, color)
+            #yield filename
+            yield search_result.BinarySearchResult(filename=filename)
     else:
-        for line_nr, line in results_in_text_file(filename,
+        for line_nr, line, result in results_in_text_file(filename,
                                                   regexes.regex_txt,
                                                   invert_match):
             # match_occurred = True
-            printer_helper.print_match(filename, line, regexes.regex_txt,
-                                       no_filename,
-                                       False, color)
-            yield search_result.SearchResult(line_number=line_nr,
-                                             match_text=line,
+            #printer_helper.print_match(filename, line, regexes.regex_txt,
+            #                           no_filename,
+            #                           False, color)
+            yield search_result.TextSearchResult(line_number=line_nr,
+                                             line=line,
+                                             match=result,
                                              filename=filename)
-            # return match_occurred

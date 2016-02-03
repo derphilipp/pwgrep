@@ -1,14 +1,37 @@
 class SearchResult(object):
-    def __init__(self,
-                 line_number=None,
-                 before_match_text=None,
-                 match_text=None,
-                 after_match_text=None,
-                 filename=None
-                 ):
+    def __init__(self):
+        pass
 
-        self.line_number = line_number
-        self.before_match_text = before_match_text
-        self.match_text = match_text
-        self.after_match_text = after_match_text
+class FileSearchResult(object):
+    def __init__(self, filename=None):
+        super(FileSearchResult, self).__init__()
         self.filename = filename
+        assert(self.filename is not None)
+
+
+class BinarySearchResult(FileSearchResult):
+    def __init__(self, filename=None):
+        super(BinarySearchResult, self).__init__(filename)
+        self.match=True
+
+
+class TextSearchResult(FileSearchResult):
+    def __init__(self, line_number=None, line=None, match=None, filename=None):
+        super(TextSearchResult, self).__init__(filename)
+        self.line_number = line_number
+        self.match = match
+        self.line=line
+        assert(self.line_number is not None)
+        assert(self.line is not None)
+
+
+class StdinSearchResult(SearchResult):
+    def __init__(self, line_number=None, line=None, match=None):
+        super(StdinSearchResult, self).__init__()
+        self.line_number=line_number
+        self.match=match
+        self.line=line
+        assert(self.line is not None)
+        assert(self.line_number is not None)
+
+

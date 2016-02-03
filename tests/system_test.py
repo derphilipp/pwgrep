@@ -31,8 +31,8 @@ INFINITE_RECURSION_LINK = r'tests/data/infinite_recursion'
 def helper_test_match(directory, command, stdout_shall, stderr_shall,
                       return_code_shall, stdin=None):
     return_code_is, stdout_is, stderr_is = caller(directory, command, stdin)
-    assert stderr_is.decode("utf-8") == stderr_shall
-    assert stdout_is.decode("utf-8") == stdout_shall
+    assert stderr_is.decode("utf-8") == stderr_shall, "Real STDERR:\n\n{}\n\nExpected STDERR:\n\n{}".format(stderr_is, stderr_shall)
+    assert stdout_is.decode("utf-8") == stdout_shall, "Real STDOUT:\n\n{}\n\nExpected STDOUT:\n{}".format(stdout_is, stdout_shall)
     assert return_code_is == return_code_shall
 
 
@@ -213,19 +213,19 @@ pwgrep: error: argument PATTERN: * is an invalid regular expression: 'nothing to
 # stdin
 def test_stdin_l():
     stdin = b"""Hello
-    World
-    how
-    are
-    you?
-    """
+World
+how
+are
+you?
+"""
     helper_test_match(SIMPLEDIR, 'l', 'Hello\nWorld\n', '', 0, stdin)
 
 
 def test_stdin_year():
     stdin = b"""Happy New
-    Year 2016
-    to all of you
-    """
+Year 2016
+to all of you
+"""
     helper_test_match(SIMPLEDIR, 'Year', 'Year 2016\n', '', 0, stdin)
 
 

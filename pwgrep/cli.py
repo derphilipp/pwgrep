@@ -5,7 +5,9 @@ import signal
 import sys
 
 from pwgrep import commandline_parser
+from pwgrep import printer_helper
 from pwgrep import process
+from pwgrep import search_result
 
 
 def run(args):
@@ -17,15 +19,21 @@ def run(args):
     """
     parser_result = commandline_parser.CommandLineParser().parse(args)
     grepper = process.Grepper(parser_result)
-
-    # printer = ResultPrinter(parser_result)
+    printer = printer_helper.ResultPrinter(
+            colorize=parser_result.color,
+            print_filename=parser_result.print_filename,
+            invert_match=parser_result.options.invert_match
+            )
 
     any_match = False
     if not parser_result.options.PATH:
-        for match in grepper.grep_stdin():
-            any_match = True
+        data_from = grepper.grep_stdin()
     else:
-        for match in grepper.grep_files_from_commandline():
+        data_from = grepper.grep_files_from_commandline()
+
+    for result in data_from:
+        printer.print_result(result)
+        if result.match:
             any_match = True
     return any_match
 

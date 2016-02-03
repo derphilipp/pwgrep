@@ -53,3 +53,15 @@ class CommandLineParserResult(object):
             return True
         # can only be 'auto' at this point
         return os.isatty(sys.stdout.fileno())
+
+    @property
+    def recursion_any(self):
+        return self.options.dereference_recursive or self.options.recursive
+
+    @property
+    def print_filename(self):
+        if self.options.no_filename:
+            return False
+        if len(self.options.PATH)==1 and not self.recursion_any:
+            return False
+        return True
