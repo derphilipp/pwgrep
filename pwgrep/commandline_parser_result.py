@@ -36,10 +36,10 @@ class CommandLineParserResult(object):
         :param options: CommandLineParameter options
         :return:
         """
-        self.options = options
+        self._options = options
         self.regexes = RegexContainer(
-            self.options.PATTERN[0],
-            self.options.ignore_case
+            self._options.PATTERN[0],
+            self._options.ignore_case
         )
 
     @property
@@ -49,21 +49,38 @@ class CommandLineParserResult(object):
 
         :return: If color should be used
         """
-        if self.options.color is None or self.options.color == 'never':
+        if self._options.color is None or self._options.color == 'never':
             return False
-        if self.options.color == 'always':
+        if self._options.color == 'always':
             return True
         # can only be 'auto' at this point
         return os.isatty(sys.stdout.fileno())
 
     @property
     def recursion_any(self):
-        return self.options.dereference_recursive or self.options.recursive
+        return self.dereference_recursive or self.normal_recursive
+
+    @property
+    def dereference_recursive(self):
+        return self._options.dereference_recursive
+
+    @property
+    def normal_recursive(self):
+        return self._options.recursive
 
     @property
     def print_filename(self):
-        if self.options.no_filename:
+        if self._options.no_filename:
             return False
-        if len(self.options.PATH) == 1 and not self.recursion_any:
+        if len(self._options.PATH) == 1 and not self.recursion_any:
             return False
         return True
+
+    @property
+    def PATH(self):
+        return self._options.PATH
+
+    @property
+    def invert_match(self):
+        return self._options.invert_match
+

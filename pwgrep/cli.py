@@ -21,16 +21,11 @@ def run(args):
     printer = printer_helper.ResultPrinter(
         colorize=parser_result.color,
         print_filename=parser_result.print_filename,
-        invert_match=parser_result.options.invert_match
+        invert_match=parser_result.invert_match
     )
 
     any_match = False
-    if not parser_result.options.PATH:
-        data_from = grepper.grep_stdin()
-    else:
-        data_from = grepper.grep_files_from_commandline()
-
-    for result in data_from:
+    for result in grepper.grep():
         printer.print_result(result)
         if result.match:
             any_match = True
