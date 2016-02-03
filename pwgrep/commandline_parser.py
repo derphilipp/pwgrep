@@ -6,7 +6,7 @@ import sre_constants
 import argparse
 
 from pwgrep import commandline_parser_text
-from pwgrep import version
+from pwgrep.version import VERSION
 from pwgrep.commandline_parser_result import CommandLineParserResult
 
 
@@ -68,7 +68,7 @@ class CommandLineParser(object):
         )
         self._parser.add_argument(
             '--version',
-            action='version', version='pwgrep {}'.format(version.VERSION)
+            action='version', version='pwgrep {}'.format(VERSION)
         )
         self._parser.add_argument(
             '--help',

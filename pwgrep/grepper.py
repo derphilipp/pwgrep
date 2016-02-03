@@ -1,13 +1,13 @@
 from pwgrep import file_helper
 from pwgrep import printer_helper
-from pwgrep import search_helper
+from pwgrep.regex_searcher import RegexSearcher
 
 
 class Grepper(object):
 
     def __init__(self, commandline_parser_results):
         self.commandline_parser_results = commandline_parser_results
-        self.regex_searcher = search_helper.RegexSearcher(
+        self.regex_searcher = RegexSearcher(
             self.commandline_parser_results.regexes,
             invert_match=self.commandline_parser_results.invert_match)
 

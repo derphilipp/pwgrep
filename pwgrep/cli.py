@@ -4,9 +4,9 @@
 import signal
 import sys
 
-from pwgrep import commandline_parser
-from pwgrep import printer_helper
-from pwgrep import process
+from pwgrep.commandline_parser import CommandLineParser
+from pwgrep.result_printer import ResultPrinter
+from pwgrep.grepper import Grepper
 
 
 def run(args):
@@ -16,9 +16,9 @@ def run(args):
     :param args: command line parameters (except [0], i.e. program name)
     :return: if any match was found in file
     """
-    parser_result = commandline_parser.CommandLineParser().parse(args)
-    grepper = process.Grepper(parser_result)
-    printer = printer_helper.ResultPrinter(
+    parser_result = CommandLineParser().parse(args)
+    grepper = Grepper(parser_result)
+    printer = ResultPrinter(
         colorize=parser_result.color,
         print_filename=parser_result.print_filename,
         invert_match=parser_result.invert_match
