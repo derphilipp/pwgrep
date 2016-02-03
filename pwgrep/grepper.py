@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from pwgrep import file_helper
 from pwgrep import printer_helper
 from pwgrep.regex_searcher import RegexSearcher
