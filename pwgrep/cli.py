@@ -32,7 +32,7 @@ def run(args):
     return any_match
 
 
-def signal_terminal_handler(signal_nr, _):
+def signal_terminal_handler(signal_nr, _): # pragma: no cover
     """
     Handler for signals; Quits program with correct exit code.
 
@@ -54,7 +54,7 @@ def main(args=sys.argv[1:]):
 
     try:
         any_match = run(args)
-    except KeyboardInterrupt:
+    except KeyboardInterrupt: # pragma: no cover
         sys.exit(1)
 
     if any_match:
