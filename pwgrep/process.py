@@ -1,9 +1,6 @@
 from pwgrep import file_helper
 from pwgrep import printer_helper
 from pwgrep import search_helper
-from pwgrep import search_result
-
-import sys
 
 
 class Grepper(object):

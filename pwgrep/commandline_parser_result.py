@@ -83,4 +83,3 @@ class CommandLineParserResult(object):
     @property
     def invert_match(self):
         return self._options.invert_match
-

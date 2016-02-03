@@ -31,7 +31,8 @@ class RegexSearcher(object):
     def search_in_binary_file(self, filename):
         with open(filename, 'rb+') as file_object:
             for _, line in enumerate(file_object):
-                if self.invert_match != bool(self.regexes.regex_bin.search(line)):
+                if self.invert_match != bool(
+                        self.regexes.regex_bin.search(line)):
                     return True
             return False
 

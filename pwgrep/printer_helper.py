@@ -65,7 +65,7 @@ class ResultPrinter(object):
         elif isinstance(result, search_result.StdinSearchResult):
             self.print_stdin_match(result)
         else:
-            assert False, "Invalid type to print: {}".format(typeof(result))
+            assert False, "Invalid type to print: {}".format(type(result))
 
 
 def print_loop_warning(file_name):
